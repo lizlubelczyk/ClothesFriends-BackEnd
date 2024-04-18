@@ -5,6 +5,7 @@ import com.ClothesFriends.ClothesFriendsBackEnd.model.Token;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ClaimsBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -23,7 +24,7 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private final String SECRET_KEY = "99866329eb1c05d3797bd0d4d984c3f2258c4783e7bd3a346ac3a5464137f0fb";
+    private final String SECRET_KEY = "4bb6d1dfbafb64a681139d1586b6f1160d18159afd57c8c79136d7490630407c";
     private final TokenRepository tokenRepository;
 
     public JwtService(TokenRepository tokenRepository) {
@@ -60,18 +61,21 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(getSigninKey())
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts
+                .parser()
+                .verifyWith(getSigninKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
+
 
     public String generateToken(User user) {
         String token = Jwts
                 .builder()
-                .setSubject(user.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 24*60*60*1000 ))
+                .subject(user.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 24*60*60*1000 ))
                 .signWith(getSigninKey())
                 .compact();
 

@@ -1,5 +1,7 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.config;
 
+import com.ClothesFriends.ClothesFriendsBackEnd.Filter.JwtAuthenticationFilter;
+import com.ClothesFriends.ClothesFriendsBackEnd.service.UserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -20,20 +22,23 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserDetailsServiceImp userDetailsService;
+    private final UserDetailsService userDetailsServiceImp;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private final CustomLogoutHandler logoutHandler;
 
-    public SecurityConfig(UserDetailsServiceImp userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter, CustomLogoutHandler logoutHandler) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(UserDetailsService userDetailsServiceImp,
+                          JwtAuthenticationFilter jwtAuthenticationFilter,
+                          CustomLogoutHandler logoutHandler) {
+        this.userDetailsServiceImp = userDetailsServiceImp;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.logoutHandler = logoutHandler;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
@@ -69,4 +74,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
+
+
 }

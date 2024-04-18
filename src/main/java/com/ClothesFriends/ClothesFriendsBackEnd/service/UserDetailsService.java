@@ -3,7 +3,10 @@ package com.ClothesFriends.ClothesFriendsBackEnd.service;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService{
     private final UserRepository repository;
 

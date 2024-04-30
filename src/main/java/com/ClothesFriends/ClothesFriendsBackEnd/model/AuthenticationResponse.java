@@ -2,18 +2,18 @@ package com.ClothesFriends.ClothesFriendsBackEnd.model;
 
 public class AuthenticationResponse {
     private String token;
-    private String message;
+    private Integer id;
 
-    public AuthenticationResponse(String token, String message) {
+    public AuthenticationResponse(String token, Integer id) {
         this.token = token;
-        this.message = message;
+        this.id = id;
     }
 
     public String getToken() {
         return token;
     }
 
-    public String getMessage() {
-        return message;
+    public Integer getId() {
+        return id;
     }
 }

@@ -1,6 +1,7 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.model.AuthenticationResponse;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Token;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,4 +37,7 @@ public class AuthenticationController {
     ) {
         return ResponseEntity.ok(authService.authenticate(request));
     }
+
+
+
 }

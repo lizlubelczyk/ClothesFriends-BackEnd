@@ -30,6 +30,9 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
+    @Column (name = "profile_picture")
+    private String profilePicture= "gs://clothesfriends-8b835.appspot.com/ProfilePicture/Default.jpeg";
+
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
@@ -65,6 +68,13 @@ public class User implements UserDetails {
         return username;
     }
 
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
     @Override
     public boolean isAccountNonExpired() {
         return true;

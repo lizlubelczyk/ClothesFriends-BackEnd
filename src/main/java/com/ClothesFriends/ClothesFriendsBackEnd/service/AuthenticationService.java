@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthenticationService {
@@ -38,7 +39,7 @@ public class AuthenticationService {
 
         // check if user already exist. if exist than authenticate the user
         if(repository.findByUsername(request.getUsername()).isPresent()) {
-            return new AuthenticationResponse(null, "User already exist");
+            return new AuthenticationResponse(null, null);
         }
 
         User user = new User();
@@ -46,8 +47,6 @@ public class AuthenticationService {
         user.setFullName(request.getFullName());
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-
         user.setRole(request.getRole());
 
         user = repository.save(user);
@@ -56,7 +55,7 @@ public class AuthenticationService {
 
         saveUserToken(jwt, user);
 
-        return new AuthenticationResponse(jwt, "User registration was successful");
+        return new AuthenticationResponse(jwt, user.getId());
 
     }
 
@@ -74,10 +73,10 @@ public class AuthenticationService {
         revokeAllTokenByUser(user);
         saveUserToken(jwt, user);
 
-        return new AuthenticationResponse(jwt, "User login was successful");
+        return new AuthenticationResponse(jwt, user.getId());
 
     }
-    private void revokeAllTokenByUser(User user) {
+    public void revokeAllTokenByUser(User user) {
         List<Token> validTokens = tokenRepository.findAllTokensByUser(user.getId());
         if(validTokens.isEmpty()) {
             return;
@@ -96,4 +95,5 @@ public class AuthenticationService {
         token.setUser(user);
         tokenRepository.save(token);
     }
+
 }

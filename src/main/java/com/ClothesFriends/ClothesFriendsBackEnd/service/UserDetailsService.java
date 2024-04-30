@@ -1,5 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
+import com.ClothesFriends.ClothesFriendsBackEnd.model.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,4 +20,6 @@ public class UserDetailsService implements org.springframework.security.core.use
         return repository.findByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
     }
+
+
 }

@@ -1,5 +1,7 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.model;
 
+import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +21,7 @@ public class Token {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     public Integer getId() {

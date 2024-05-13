@@ -1,15 +1,13 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.model;
 
+import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import jakarta.persistence.*;
-
-import java.util.Arrays;
-import java.util.Date;
 
 @Entity
 @Table(name = "clothing_item")
 public class ClothingItem {
     @Id @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -18,20 +16,25 @@ public class ClothingItem {
     private String description;
 
     @Lob
-    @Column(name = "image", length=Integer.MAX_VALUE, nullable = true)
-    private byte[] image;
+    @Column(name = "image", nullable = false)
+    private String image;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_date", nullable = false)
-    private Date createDate;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
+    @Column(name= "available")
+    private boolean available;
+
+    @Column(name = "subcategory", nullable = false)
+    private String subcategory;
     public ClothingItem() {}
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -51,27 +54,24 @@ public class ClothingItem {
         this.description = description;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
-    public Date getCreateDate() {
-        return createDate;
+
+    public void setSubcategory(String subcategory) {
+        this.subcategory = subcategory;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
-    @Override
-    public String toString() {
-        return "Product [id=" + id + ", name=" + name + ", description=" + description + ", image="
-                + Arrays.toString(image) + ", createDate=" + createDate + "]";
+    public void setUser(User user) {
+        this.user = user;
     }
-
-
 }

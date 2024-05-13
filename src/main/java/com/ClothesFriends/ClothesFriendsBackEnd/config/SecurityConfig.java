@@ -39,7 +39,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF for stateless JWT
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/login/**", "/register/**").permitAll()  // Public endpoints
+                        .requestMatchers("/login/**", "/register/**", "/error").permitAll()  // Public endpoints
                         .requestMatchers("/admin_only/**").hasAuthority("ADMIN")  // Admin-only routes
                         .anyRequest().authenticated()  // Require authentication for all other endpoints
                 )

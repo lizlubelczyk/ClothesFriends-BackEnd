@@ -1,24 +1,16 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.model.Role;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.Token;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.User;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ClaimsBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.function.Function;
 
 @Service

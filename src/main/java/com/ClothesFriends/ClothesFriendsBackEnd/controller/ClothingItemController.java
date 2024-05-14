@@ -1,6 +1,8 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.CreateClothingItemDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.CreateClothingItemDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemBySubcategoryDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.ClothingItemService;
@@ -56,6 +58,22 @@ public class ClothingItemController {
         List<ClothingItem> clothingItems = clothingItemService.getAllClothingItems();
         map.addAttribute("clothingItems", clothingItems);
         return "clothingItems";
+    }
+
+    @GetMapping("/getAll/{userId}/{subcategory}")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetClothingItemBySubcategoryDTO>> getAllClothingItems(@PathVariable Integer userId, @PathVariable String subcategory) {
+        List<GetClothingItemBySubcategoryDTO> clothingItems = clothingItemService.getAllClothingItemsBySubcategory(userId, subcategory);
+        return ResponseEntity.ok(clothingItems);
+    }
+
+    @GetMapping("/get/{clothingItemId}")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<GetClothingItemDTO> getClothingItem(@PathVariable Integer clothingItemId) {
+        GetClothingItemDTO clothingItem = clothingItemService.getClothingItem(clothingItemId);
+        return ResponseEntity.ok(clothingItem);
     }
 
 }

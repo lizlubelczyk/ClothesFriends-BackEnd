@@ -40,7 +40,7 @@ public class OutfitService {
         String filename = UUID.randomUUID().toString() + ".jpg";
 
         // Define the path to the user's inspiration directory
-        Path inspirationDirectory = Paths.get("C:/Users/lizlu/OneDrive/Documentos/3ero/LabI/ClothesFriends-FrontEnd/public/images/" + userId + "/inspirations");
+        Path inspirationDirectory = Paths.get("C:/Users/lizlu/OneDrive/Documentos/3ero/LabI/ClothesFriends-FrontEnd/public/images/" + userId + "/outfits");
 
         // If the directory does not exist, create it
         if (!Files.exists(inspirationDirectory)) {

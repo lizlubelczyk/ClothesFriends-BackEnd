@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,11 +33,12 @@ public class InspirationController {
     @PostMapping("/{userId}/create")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Inspiration> createInspiration(@PathVariable Integer userId, @RequestBody CreateInspirationDTO inspiration) throws IOException {
+    public ResponseEntity<Inspiration> createInspiration(@PathVariable Integer userId, @RequestParam("image") MultipartFile image, @RequestParam("description") String description) throws IOException {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(404).body(null); // Not found if user does not exist
         }
+        CreateInspirationDTO inspiration = new CreateInspirationDTO(image.getBytes(), description, userId);
         Inspiration newInspiration = inspirationService.saveInspiration(inspiration, user);
         return ResponseEntity.ok(newInspiration);
     }

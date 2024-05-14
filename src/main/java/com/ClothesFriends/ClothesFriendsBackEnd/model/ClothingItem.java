@@ -71,6 +71,10 @@ public class ClothingItem {
         this.available = available;
     }
 
+    public boolean isAvailable() {
+        return available;
+    }
+
     public void setUser(User user) {
         this.user = user;
     }

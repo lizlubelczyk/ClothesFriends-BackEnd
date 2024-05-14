@@ -1,4 +1,4 @@
-package com.ClothesFriends.ClothesFriendsBackEnd.DTO;
+package com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;

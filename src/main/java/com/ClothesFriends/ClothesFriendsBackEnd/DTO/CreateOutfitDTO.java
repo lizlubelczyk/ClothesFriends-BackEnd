@@ -6,12 +6,12 @@ import java.util.Date;
 
 @Data
 public class CreateOutfitDTO {
-    private String image;
+    private byte[] image;
     private String description;
     private Integer userId;
     private Date timestamp;
 
-    public CreateOutfitDTO(String image, String description, Integer userId, Date timestamp) {
+    public CreateOutfitDTO(byte[] image, String description, Integer userId, Date timestamp) {
         this.image = image;
         this.description = description;
         this.userId = userId;

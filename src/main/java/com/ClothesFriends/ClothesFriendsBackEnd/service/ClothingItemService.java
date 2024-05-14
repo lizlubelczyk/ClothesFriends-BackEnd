@@ -1,6 +1,8 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.CreateClothingItemDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.CreateClothingItemDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemBySubcategoryDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.ClothingItemRepository;
@@ -14,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,10 +34,15 @@ public class ClothingItemService {
         newClothingItem.setDescription(clothingItem.getDescription());
         newClothingItem.setSubcategory(clothingItem.getSubcategory());
         newClothingItem.setAvailable(clothingItem.isAvailable());
+
+        // Set the user property
+        newClothingItem.setUser(user);
+
         String imagePath = saveImage(clothingItem.getImage(), user.getId());
         newClothingItem.setImage(imagePath);
         return clothingItemRepository.save(newClothingItem);
     }
+
 
     private String saveImage(byte[] image, Integer userId) throws IOException {
         // Generate a unique filename for the image
@@ -67,5 +75,35 @@ public class ClothingItemService {
 
     public Optional<ClothingItem> getClothingItemById(Long id) {
         return clothingItemRepository.findById(id);
+    }
+
+    public List<GetClothingItemBySubcategoryDTO> getAllClothingItemsBySubcategory(Integer userId, String subcategory) {
+        List<ClothingItem> clothingItems = clothingItemRepository.findAllByUser_IdAndSubcategory(userId, subcategory);
+        List<GetClothingItemBySubcategoryDTO> clothingItemsDTO = new ArrayList<>();
+        for (ClothingItem clothingItem : clothingItems) {
+            GetClothingItemBySubcategoryDTO clothingItemDTO = new GetClothingItemBySubcategoryDTO(
+                    clothingItem.getImage(),
+                    clothingItem.getId()
+            );
+            clothingItemsDTO.add(clothingItemDTO);
+
+        }
+        return clothingItemsDTO;
+    }
+
+    public GetClothingItemDTO getClothingItem(Integer clothingItemId) {
+        ClothingItem clothingItem = clothingItemRepository.findById(clothingItemId);
+
+        if (clothingItem == null) {
+            return null;
+        }
+        GetClothingItemDTO clothingItemDTO = new GetClothingItemDTO(
+                clothingItem.getName(),
+                clothingItem.getDescription(),
+                clothingItem.getImage(),
+                clothingItem.isAvailable()
+
+        );
+        return clothingItemDTO;
     }
 }

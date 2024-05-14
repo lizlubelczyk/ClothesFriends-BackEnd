@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/outfit")
@@ -30,11 +32,17 @@ public class OutfitController {
     @PostMapping("/{userId}/create")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Outfit> createOutfit(@PathVariable Integer userId, @RequestBody CreateOutfitDTO outfit) throws IOException, IOException {
+    public ResponseEntity<Outfit> createOutfit(@PathVariable Integer userId,
+                                               @RequestParam("description") String description,
+                                               @RequestParam("image") MultipartFile image,
+                                               @RequestParam("timestamp") Date timestamp
+                                               ) throws IOException, IOException {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(404).body(null); // Not found if user does not exist
         }
+
+        CreateOutfitDTO outfit = new CreateOutfitDTO(image.getBytes(), description, userId, timestamp);
         Outfit newOutfit = outfitService.saveOutfit(outfit, user);
         return ResponseEntity.ok(newOutfit);
     }

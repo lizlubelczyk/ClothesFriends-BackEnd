@@ -1,6 +1,7 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.CreateOutfitDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetMyOutfitDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Outfit;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.Outfit.OutfitService;
@@ -34,16 +35,63 @@ public class OutfitController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Outfit> createOutfit(@PathVariable Integer userId,
                                                @RequestParam("description") String description,
-                                               @RequestParam("image") MultipartFile image,
-                                               @RequestParam("timestamp") Date timestamp
+                                               @RequestParam("image") MultipartFile image
                                                ) throws IOException, IOException {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(404).body(null); // Not found if user does not exist
         }
 
-        CreateOutfitDTO outfit = new CreateOutfitDTO(image.getBytes(), description, userId, timestamp);
+        CreateOutfitDTO outfit = new CreateOutfitDTO(image.getBytes(), description, userId);
         Outfit newOutfit = outfitService.saveOutfit(outfit, user);
         return ResponseEntity.ok(newOutfit);
     }
+
+    // OutfitController.java
+    @GetMapping("/{userId}/getLatest")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<GetMyOutfitDTO> getLatestOutfit(@PathVariable Integer userId){
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.status(404).body(null); // Not found if user does not exist
+        }
+        GetMyOutfitDTO myOutfit = outfitService.getLatestOutfitByUserId(userId);
+
+        // Check if outfit is empty and return appropriate response
+        if (myOutfit.getOutfitId() == null) {
+            return ResponseEntity.status(404).body(null); // No outfit found
+        }
+
+        return ResponseEntity.ok(myOutfit);
+    }
+
+
+    @GetMapping("/{userId}/hasOutfit")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Boolean> hasOutfit(@PathVariable Integer userId){
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.status(404).body(null); // Not found if user does not exist
+        }
+
+        // Check if the user has an outfit and return the result
+        boolean hasOutfit = outfitService.hasOutfit(userId);
+        return ResponseEntity.ok(hasOutfit);
+    }
+
+    @DeleteMapping("/{outfitId}/delete")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Void> deleteOutfit(@PathVariable Integer outfitId){
+        Outfit outfit = outfitService.getOutfitById(outfitId);
+        if (outfit == null) {
+            return ResponseEntity.status(404).build(); // Not found if outfit does not exist
+        }
+
+        outfitService.deleteOutfit(outfit);
+        return ResponseEntity.noContent().build(); // No Content (204) on successful deletion
+    }
+
 }

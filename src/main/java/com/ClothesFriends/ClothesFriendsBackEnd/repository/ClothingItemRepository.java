@@ -10,4 +10,6 @@ import java.util.List;
 public interface ClothingItemRepository extends JpaRepository<ClothingItem, Long> {
     List<ClothingItem> findAllByUser_IdAndSubcategory(Integer userId, String subcategory);
     ClothingItem findById(Integer id);
+
+    void deleteById(Integer id);
 }

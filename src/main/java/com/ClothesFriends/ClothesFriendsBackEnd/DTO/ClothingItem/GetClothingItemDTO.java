@@ -1,5 +1,8 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem;
 
+import lombok.Data;
+
+@Data
 public class GetClothingItemDTO {
     private String name;
     private String description;

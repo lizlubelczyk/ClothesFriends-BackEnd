@@ -2,6 +2,7 @@ package com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.VoteType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +20,7 @@ public class Vote {
 
     @ManyToOne
     @JoinColumn(name = "outfit_id", nullable = false)
+    @JsonBackReference
     private Outfit outfit;
 
     @Column(name = "voteType", nullable = false)

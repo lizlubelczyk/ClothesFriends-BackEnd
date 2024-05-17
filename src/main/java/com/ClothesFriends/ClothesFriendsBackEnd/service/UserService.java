@@ -1,6 +1,8 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.EditUserDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.UpdateUserRequestDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.UserProfileDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.User.UserRepository;
@@ -38,6 +40,20 @@ public class UserService {
     public User getUserById(Integer id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User with id '" + id + "' not found"));
+    }
+
+    public UserProfileDTO getUserProfile(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User with id '" + userId + "' not found"));
+
+        return new UserProfileDTO(user.getUsername(), user.getProfilePicture(), user.getFullName());
+    }
+
+    public EditUserDTO getUserEdit(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User with id '" + userId + "' not found"));
+
+        return new EditUserDTO(user.getUsername(), user.getFullName(), user.getEmail(), user.getWhatsappLink(), user.getProfilePicture());
     }
 
     public User updateUser(UpdateUserRequestDTO updatedUser, Integer userId){
@@ -102,13 +118,15 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public List<Inspiration> getInspirationsByUserId(Integer userId) {
+   /* public List<Inspiration> getInspirationsByUserId(Integer userId) {
         return inspirationService.getInspirationsByUserId(userId);
-    }
+    }*/
 
     public List<Inspiration> getLikedInspirationsByUserId(Integer userId) {
         return likeService.getLikedInspirationsByUserId(userId);
     }
+
+
 
 
     // Additional user-related logic can go here

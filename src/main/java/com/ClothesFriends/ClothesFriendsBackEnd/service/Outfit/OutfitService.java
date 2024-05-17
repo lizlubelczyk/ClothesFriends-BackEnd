@@ -1,6 +1,7 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service.Outfit;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.CreateOutfitDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetMyOutfitDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Outfit;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.Outfit.OutfitRepository;
@@ -14,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -30,7 +33,7 @@ public class OutfitService {
     public Outfit saveOutfit(CreateOutfitDTO outfit, User user) throws IOException {
         Outfit newOutfit = new Outfit();
         newOutfit.setDescription(outfit.getDescription());
-        //newOutfit.setImage(saveImage(outfit.getImage(), user.getId()));
+        newOutfit.setImage(saveImage(outfit.getImage(), user.getId()));
         newOutfit.setUser(user);
         return outfitRepository.save(newOutfit);
     }
@@ -55,7 +58,36 @@ public class OutfitService {
 
         // Save the image file
         Files.copy(inputStream, imagePath, StandardCopyOption.REPLACE_EXISTING);
-        return imagePath.toString();
+        return "/images/" + userId + "/outfits/" + filename;
 
+    }
+
+    // OutfitService.java
+    public GetMyOutfitDTO getLatestOutfitByUserId(Integer userId){
+        Outfit latestOutfit = outfitRepository.findLatestByUserId(userId);
+        if (latestOutfit != null) {
+            LocalDateTime createdAt = latestOutfit.getCreatedAt();
+            LocalDateTime now = LocalDateTime.now();
+            Duration duration = Duration.between(createdAt, now);
+            if (duration.toHours() < 3) {
+                return new GetMyOutfitDTO(latestOutfit.getId(), latestOutfit.getImage(), latestOutfit.getDescription());
+            }
+        }
+        // Return an empty DTO to indicate no outfit found
+        return new GetMyOutfitDTO(null, null, null);
+    }
+
+    public boolean hasOutfit(Integer userId) {
+        GetMyOutfitDTO outfit = getLatestOutfitByUserId(userId);
+        return outfit != null && outfit.getOutfitId() != null;
+    }
+
+
+    public Outfit getOutfitById(Integer outfitId) {
+        return outfitRepository.findById(outfitId).orElse(null);
+    }
+
+    public void deleteOutfit(Outfit outfit) {
+        outfitRepository.delete(outfit);
     }
 }

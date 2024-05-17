@@ -1,8 +1,10 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,10 +26,12 @@ public class Outfit {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
-    @Column(name = "timestamp", nullable = false)
-    private LocalDateTime timestamp;
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "outfit", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -63,6 +67,10 @@ public class Outfit {
 
     public Integer getId() {
         return id;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
 

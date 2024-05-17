@@ -1,6 +1,8 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.EditUserDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.UpdateUserRequestDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.UserProfileDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.Inspiration.InspirationService;
@@ -38,15 +40,24 @@ public class UserController {
     }
 
     // Get the current authenticated user's details
-    @GetMapping("/get/{userId}")
+    @GetMapping("/get/{userId}/profile")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
-
-    public ResponseEntity<User> getUser(@PathVariable Integer userId) {
-        User user = userService.getUserById(userId);
+    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable Integer userId) {
+        UserProfileDTO user = userService.getUserProfile(userId);
         return ResponseEntity.ok(user);
 
     }
+
+    @GetMapping("/get/{userId}/edit")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<EditUserDTO> getUserEdit(@PathVariable Integer userId) {
+        EditUserDTO user = userService.getUserEdit(userId);
+        return ResponseEntity.ok(user);
+
+    }
+
 
 
     // Update the authenticated user's details

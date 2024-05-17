@@ -1,6 +1,7 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -21,6 +22,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "outfit_id", nullable = false)
+    @JsonBackReference
     private Outfit outfit;
 
 

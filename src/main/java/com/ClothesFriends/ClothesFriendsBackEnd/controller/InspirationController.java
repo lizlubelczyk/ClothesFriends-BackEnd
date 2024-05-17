@@ -1,7 +1,9 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.CreateInspirationDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetInspirationDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetAllMyInspirationDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetMyInspirationDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetMyInspirationDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Like;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -33,7 +36,10 @@ public class InspirationController {
     @PostMapping("/{userId}/create")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Inspiration> createInspiration(@PathVariable Integer userId, @RequestParam("image") MultipartFile image, @RequestParam("description") String description) throws IOException {
+    public ResponseEntity<Inspiration> createInspiration(@PathVariable Integer userId,
+                                                         @RequestParam("image") MultipartFile image,
+                                                         @RequestParam("description") String description
+                                                         ) throws IOException {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(404).body(null); // Not found if user does not exist
@@ -46,36 +52,21 @@ public class InspirationController {
     @GetMapping("/get/{inspirationId}")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<GetInspirationDTO> getInspiration(@PathVariable Integer inspirationId) {
-        Optional<Inspiration> inspiration = inspirationService.getInspirationById(inspirationId);
+    public ResponseEntity<GetMyInspirationDTO> getInspiration(@PathVariable Integer inspirationId) {
+        GetMyInspirationDTO inspiration = inspirationService.getInspiration(inspirationId);
 
-        String image = inspiration.get().getImage();
-        String description = inspiration.get().getDescription();
-            String username = userService.getUserById(inspiration.get().getUser().getId()).getUsername();
-        Integer likes = inspirationService.countLikes(inspirationId);
-
-
-        GetInspirationDTO getInspirationDTO = new GetInspirationDTO(image, likes, username, description);
-        return ResponseEntity.ok(getInspirationDTO);
+        if(inspiration == null) {
+            return ResponseEntity.status(404).body(null); // Not found if inspiration does not exist
+        }
+        return ResponseEntity.ok(inspiration);
     }
 
     @GetMapping("/get/{userId}/all")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Iterable<GetInspirationDTO>> getAllUserInspirations(@PathVariable Integer userId) {
-        User user = userService.getUserById(userId);
-        Iterable<Inspiration> inspirations = inspirationService.getInspirationsByUserId(user.getId());
-        Iterable<GetInspirationDTO> getInspirationDTOs = new ArrayList<>();
-        for (Inspiration inspiration : inspirations) {
-            String image = inspiration.getImage();
-            String description = inspiration.getDescription();
-            String username = userService.getUserById(inspiration.getUser().getId()).getUsername();
-            Integer likes = inspirationService.countLikes(inspiration.getId());
-            GetInspirationDTO getInspirationDTO = new GetInspirationDTO(image, likes, username, description);
-            ((ArrayList<GetInspirationDTO>) getInspirationDTOs).add(getInspirationDTO);
-
-        }
-        return ResponseEntity.ok(getInspirationDTOs);
+    public ResponseEntity<List<GetAllMyInspirationDTO>> getAllUserInspirations(@PathVariable Integer userId) {
+        List<GetAllMyInspirationDTO> inspirations = inspirationService.getInspirationsByUserId(userId);
+        return ResponseEntity.ok(inspirations);
     }
 
     @PostMapping("/post/{inspirationId}/like")
@@ -104,8 +95,12 @@ public class InspirationController {
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> deleteInspiration(@PathVariable Integer inspirationId) {
+        Inspiration inspiration = inspirationService.getInspirationById(inspirationId).get();
+        if(inspiration == null) {
+            return ResponseEntity.status(404).body(null); // Not found if inspiration does not exist
+        }
         inspirationService.deleteInspirationById(inspirationId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 

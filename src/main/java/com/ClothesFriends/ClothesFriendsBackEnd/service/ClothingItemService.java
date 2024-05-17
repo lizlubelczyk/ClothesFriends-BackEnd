@@ -73,8 +73,8 @@ public class ClothingItemService {
         return clothingItemRepository.findAll();
     }
 
-    public Optional<ClothingItem> getClothingItemById(Long id) {
-        return clothingItemRepository.findById(id);
+    public Optional<ClothingItem> getClothingItemById(Integer id) {
+        return Optional.ofNullable(clothingItemRepository.findById(id));
     }
 
     public List<GetClothingItemBySubcategoryDTO> getAllClothingItemsBySubcategory(Integer userId, String subcategory) {
@@ -95,7 +95,7 @@ public class ClothingItemService {
         ClothingItem clothingItem = clothingItemRepository.findById(clothingItemId);
 
         if (clothingItem == null) {
-            return null;
+            return new GetClothingItemDTO(null, null, null, false);
         }
         GetClothingItemDTO clothingItemDTO = new GetClothingItemDTO(
                 clothingItem.getName(),
@@ -105,5 +105,15 @@ public class ClothingItemService {
 
         );
         return clothingItemDTO;
+    }
+
+    public ClothingItem changeAvailable(Integer clothingItemId) {
+        ClothingItem clothingItem = clothingItemRepository.findById(clothingItemId);
+        clothingItem.setAvailable(!clothingItem.isAvailable());
+        return clothingItemRepository.save(clothingItem);
+    }
+
+    public void deleteClothingItem(Integer clothingItemId) {
+        clothingItemRepository.deleteById(clothingItemId);
     }
 }

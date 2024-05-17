@@ -63,7 +63,7 @@ public class ClothingItemController {
     @GetMapping("/getAll/{userId}/{subcategory}")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<List<GetClothingItemBySubcategoryDTO>> getAllClothingItems(@PathVariable Integer userId, @PathVariable String subcategory) {
+    public ResponseEntity<List<GetClothingItemBySubcategoryDTO>> getAllClothingItemsByCategory(@PathVariable Integer userId, @PathVariable String subcategory) {
         List<GetClothingItemBySubcategoryDTO> clothingItems = clothingItemService.getAllClothingItemsBySubcategory(userId, subcategory);
         return ResponseEntity.ok(clothingItems);
     }
@@ -73,7 +73,30 @@ public class ClothingItemController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<GetClothingItemDTO> getClothingItem(@PathVariable Integer clothingItemId) {
         GetClothingItemDTO clothingItem = clothingItemService.getClothingItem(clothingItemId);
+        if (clothingItem.getName() == null) {
+            return ResponseEntity.status(404).body(null); // Not found if clothing item does not exist
+        }
         return ResponseEntity.ok(clothingItem);
+    }
+
+    @PostMapping("/changeAvailable/{clothingItemId}")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<ClothingItem> changeAvailable(@PathVariable Integer clothingItemId) {
+        ClothingItem clothingItem = clothingItemService.changeAvailable(clothingItemId);
+        return ResponseEntity.ok(clothingItem);
+    }
+
+    @DeleteMapping("/{clothingItemId}/delete")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Void> deleteClothingItem(@PathVariable Integer clothingItemId){
+        ClothingItem clothingItem = clothingItemService.getClothingItemById(clothingItemId).get();
+        if (clothingItem == null) {
+            return ResponseEntity.status(404).build(); // Not found if clothing item does not exist
+        }
+        clothingItemService.deleteClothingItem(clothingItemId);
+        return ResponseEntity.ok().build();
     }
 
 }

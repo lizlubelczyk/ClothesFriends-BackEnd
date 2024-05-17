@@ -1,6 +1,8 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service.Inspiration;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.CreateInspirationDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetAllMyInspirationDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetMyInspirationDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Like;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
@@ -15,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,15 +65,25 @@ public class InspirationService {
 
         // Save the image file
         Files.copy(inputStream, imagePath, StandardCopyOption.REPLACE_EXISTING);
-        return imagePath.toString();
+        return "/images/" + userId + "/inspirations/" + filename;
     }
 
     public Integer countLikes(Integer inspirationId) {
         return likeService.countLikes(inspirationId);
     }
 
-    public List<Inspiration> getInspirationsByUserId(Integer userId) {
-        return inspirationRepository.findAllByUserId(userId);
+    public List<GetAllMyInspirationDTO> getInspirationsByUserId(Integer userId) {
+        List<Inspiration> inspirations = inspirationRepository.findAllByUserId(userId);
+        List<GetAllMyInspirationDTO> inspirationDTOs = new ArrayList<>();
+        for(Inspiration inspiration : inspirations) {
+           GetAllMyInspirationDTO inspirationDTO = new GetAllMyInspirationDTO(
+                   inspiration.getId(),
+                   inspiration.getImage()
+           );
+              inspirationDTOs.add(inspirationDTO);
+
+        }
+        return inspirationDTOs;
     }
 
 
@@ -89,5 +102,10 @@ public class InspirationService {
 
     public void deleteInspirationById(Integer inspirationId) {
         inspirationRepository.deleteById(inspirationId);
+    }
+
+    public GetMyInspirationDTO getInspiration(Integer inspirationId) {
+        Inspiration inspiration = inspirationRepository.findById(inspirationId).get();
+        return new GetMyInspirationDTO(inspiration.getImage(), inspiration.getDescription());
     }
 }

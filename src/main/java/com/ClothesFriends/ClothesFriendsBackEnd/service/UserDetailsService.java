@@ -1,7 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.model.User;
-import com.ClothesFriends.ClothesFriendsBackEnd.repository.UserRepository;
+import com.ClothesFriends.ClothesFriendsBackEnd.repository.User.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

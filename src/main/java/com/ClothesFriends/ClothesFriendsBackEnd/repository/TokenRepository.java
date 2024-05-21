@@ -1,7 +1,7 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.repository;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Token;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.User;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,4 +18,6 @@ where t.user.id = :userId and t.loggedOut = false
     Optional<Token> findByToken(String token);
 
     Optional<User> findUserByToken(String token);
+
+    Token findByUserId(Integer userId);
 }

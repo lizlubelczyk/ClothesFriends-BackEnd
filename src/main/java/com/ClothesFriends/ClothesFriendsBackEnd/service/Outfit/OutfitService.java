@@ -1,10 +1,16 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service.Outfit;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.CreateOutfitDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetFriendsOutfitsDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetMyOutfitDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.VoteStatusDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Outfit;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Vote;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.VoteType;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.Outfit.OutfitRepository;
+import com.ClothesFriends.ClothesFriendsBackEnd.service.FriendshipService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +23,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,6 +32,12 @@ public class OutfitService {
 
     @Autowired
     private OutfitRepository outfitRepository;
+
+    @Autowired
+    private FriendshipService friendshipService;
+
+    @Autowired
+    private VoteService voteService;
 
     public Outfit findByUserId(Integer userId) {
         return outfitRepository.findByUserId(userId);
@@ -89,5 +103,54 @@ public class OutfitService {
 
     public void deleteOutfit(Outfit outfit) {
         outfitRepository.delete(outfit);
+    }
+
+    public List<GetFriendsOutfitsDTO> getFriendsOutfits(Integer userId) {
+        List<User> friends = friendshipService.getFriends(userId);
+        List<GetFriendsOutfitsDTO> friendsOutfits = new ArrayList<>();
+        for (User friend : friends) {
+            Outfit outfit = outfitRepository.findLatestByUserId(friend.getId());
+            if (outfit != null) {
+                LocalDateTime createdAt = outfit.getCreatedAt();
+                LocalDateTime now = LocalDateTime.now();
+                Duration duration = Duration.between(createdAt, now);
+                if (duration.toHours() < 3) {
+                    friendsOutfits.add(new GetFriendsOutfitsDTO(outfit.getId(), outfit.getDescription(), outfit.getImage(), friend.getUsername(), friend.getProfilePicture(), friend.getId()));
+                }
+            }
+
+        }
+        return friendsOutfits;
+    }
+
+    @Transactional
+    public void voteOutfit(Outfit outfit, User user, VoteType voteType) {
+        // Check if user has already voted, if yes update, otherwise create new vote
+        Vote existingVote = voteService.getUsersVote(outfit, user);
+
+
+        if (existingVote != null) {
+            existingVote.setVoteType(voteType);
+        } else {
+            Vote vote = new Vote();
+            vote.setOutfit(outfit);
+            vote.setUser(user);
+            vote.setVoteType(voteType);
+            voteService.saveVote(vote);
+        }
+    }
+
+    public VoteStatusDTO getUserVoteStatus(Integer outfitId, Integer userId) {
+        Outfit outfit = outfitRepository.findById(outfitId).orElse(null);
+        User user = new User();
+        user.setId(userId);
+        if (outfit == null) {
+            return new VoteStatusDTO(false, null);
+        }
+        Vote vote = voteService.getUsersVote(outfit, user);
+        if (vote == null) {
+            return new VoteStatusDTO(false, null);
+        }
+        return new VoteStatusDTO(true, vote.getVoteType());
     }
 }

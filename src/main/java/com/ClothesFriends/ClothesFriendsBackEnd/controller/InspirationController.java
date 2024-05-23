@@ -1,5 +1,7 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetAllFriendsDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetAllFriendsInspirationsDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.CreateInspirationDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetAllMyInspirationDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetMyInspirationDTO;
@@ -7,6 +9,7 @@ import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetMyInspiration
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Like;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
+import com.ClothesFriends.ClothesFriendsBackEnd.service.FriendshipService;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.Inspiration.InspirationService;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.UserService;
 import org.slf4j.Logger;
@@ -32,6 +35,9 @@ public class InspirationController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FriendshipService friendshipService;
 
     @PostMapping("/{userId}/create")
     @PreAuthorize("isAuthenticated()")
@@ -103,6 +109,13 @@ public class InspirationController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/get/{userId}/friendsInspirations")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetAllFriendsInspirationsDTO>> getFriendsInspirations(@PathVariable Integer userId) {
+        List <GetAllFriendsInspirationsDTO> friendsInspirations = inspirationService.getFriendsInspirations(userId);
+        return ResponseEntity.ok(friendsInspirations);
+    }
 
 
 }

@@ -1,9 +1,8 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.EditUserDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.UpdateUserRequestDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.UserProfileDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.*;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.User.Friendship;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.Inspiration.InspirationService;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.Inspiration.LikeService;
@@ -56,6 +55,18 @@ public class UserController {
         EditUserDTO user = userService.getUserEdit(userId);
         return ResponseEntity.ok(user);
 
+    }
+
+    @GetMapping("/search/{userName}/id")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Integer> searchUserIds(@PathVariable String userName) {
+        Integer userId = userService.getUserIdByUsername(userName);
+        if (userId != null) {
+            return ResponseEntity.ok(userId);
+        } else {
+            return ResponseEntity.status(404).body(null); // Not found if user does not exist
+        }
     }
 
 
@@ -141,6 +152,78 @@ public class UserController {
     }
 */
 
+    @PostMapping("/me/{userId}/befriend/{friendId}")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Friendship> befriendUser(@PathVariable Integer userId, @PathVariable Integer friendId) {
+        // Get the current user
+        User user = userService.getUserById(userId);
 
+        if (user == null) {
+            return ResponseEntity.status(404).body(null); // Not found if user does not exist
+        }
+
+        // Get the friend
+        User friend = userService.getUserById(friendId);
+
+        if (friend == null) {
+            return ResponseEntity.status(404).body(null); // Not found if friend does not exist
+        }
+
+        CreateFriendshipDTO friendshipDTO = new CreateFriendshipDTO(userId, friendId);
+        // Befriend the users
+        Friendship friendship = userService.befriendUsers(friendshipDTO);
+
+        return ResponseEntity.ok(friendship);
+    }
+
+    @GetMapping("/other/{userId}/profile")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<GetOtherUserDTO> getOtherUserProfile(@PathVariable Integer userId) {
+        GetOtherUserDTO user = userService.getOtherUserProfile(userId);
+        return ResponseEntity.ok(user);
+
+    }
+
+    @GetMapping("/get/{userId}/fullname")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<String> getFullName(@PathVariable Integer userId) {
+        String fullName = userService.getFullName(userId);
+        return ResponseEntity.ok(fullName);
+    }
+
+    @GetMapping("/{userId}/{friendId}/isFriend")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Boolean> isFriend(@PathVariable Integer userId, @PathVariable Integer friendId) {
+        Boolean isFriend = userService.isFriend(userId, friendId);
+        return ResponseEntity.ok(isFriend);
+    }
+
+    @DeleteMapping("/{userId}/{friendId}/deleteFriendship")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Void> unfriend(@PathVariable Integer userId, @PathVariable Integer friendId) {
+        userService.deleteFriendship(userId, friendId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/get/{userId}/friends")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetAllFriendsDTO>> getFriends(@PathVariable Integer userId) {
+        List<GetAllFriendsDTO> friends = userService.getFriends(userId);
+        return ResponseEntity.ok(friends);
+    }
+
+    @GetMapping("/get/{userId}/friendCount")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Integer> countFriends(@PathVariable Integer userId) {
+        Integer count = userService.countFriends(userId);
+        return ResponseEntity.ok(count);
+    }
 
 }

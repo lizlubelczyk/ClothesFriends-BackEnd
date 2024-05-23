@@ -1,5 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service.Inspiration;
 
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetAllFriendsInspirationsDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.CreateInspirationDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetAllMyInspirationDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetMyInspirationDTO;
@@ -7,6 +8,7 @@ import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Like;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.Inspiration.InspirationRepository;
+import com.ClothesFriends.ClothesFriendsBackEnd.service.FriendshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,9 @@ public class InspirationService {
 
     @Autowired
     private LikeService likeService;
+
+    @Autowired
+    private FriendshipService friendshipService;
 
 
     public InspirationService(InspirationRepository inspirationRepository) {
@@ -108,4 +113,25 @@ public class InspirationService {
         Inspiration inspiration = inspirationRepository.findById(inspirationId).get();
         return new GetMyInspirationDTO(inspiration.getImage(), inspiration.getDescription());
     }
+
+
+
+    public List<GetAllFriendsInspirationsDTO> getFriendsInspirations(Integer userId) {
+        List<User> friends = friendshipService.getFriends(userId);
+        List<Integer> friendIds = friends.stream().map(User::getId).toList();
+
+        List<Inspiration> inspirations = inspirationRepository.findByUserIdInOrderByIdDesc(friendIds);
+
+        List<GetAllFriendsInspirationsDTO> friendsInspirations = new ArrayList<>();
+        for (Inspiration inspiration : inspirations) {
+            GetAllFriendsInspirationsDTO inspirationDTO = new GetAllFriendsInspirationsDTO(
+                    inspiration.getId(),
+                    inspiration.getImage()
+            );
+            friendsInspirations.add(inspirationDTO);
+        }
+
+        return friendsInspirations;
+    }
+
 }

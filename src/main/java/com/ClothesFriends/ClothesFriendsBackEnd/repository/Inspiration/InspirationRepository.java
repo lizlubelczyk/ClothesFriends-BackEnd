@@ -8,4 +8,7 @@ import java.util.List;
 
 @Repository
 public interface InspirationRepository extends JpaRepository<Inspiration, Integer> {
-    List findAllByUserId(Integer userId);}
+    List findAllByUserId(Integer userId);
+
+    List<Inspiration> findByUserIdInOrderByIdDesc(List<Integer> userIds);
+}

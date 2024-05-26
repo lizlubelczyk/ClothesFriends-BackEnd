@@ -1,4 +1,4 @@
-package com.ClothesFriends.ClothesFriendsBackEnd.model;
+package com.ClothesFriends.ClothesFriendsBackEnd.model.Authentication;
 
 public class AuthenticationResponse {
     private String token;

@@ -1,7 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.*;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.User.*;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.Friendship;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.Inspiration.InspirationService;
@@ -94,7 +93,10 @@ public class UserController {
     @PostMapping("/me/{userId}/profile-picture")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<User> updateCurrentUserProfilePicture(@PathVariable Integer userId, @RequestParam("profilePicture") MultipartFile profilePicture) {
+    public ResponseEntity<User> updateCurrentUserProfilePicture(
+            @PathVariable Integer userId,
+            @RequestParam("profilePicture") MultipartFile profilePicture) {
+
         // Get the current user
         User user = userService.getUserById(userId);
 
@@ -116,6 +118,7 @@ public class UserController {
         }
     }
 
+
     @DeleteMapping("/me/delete/{userId}")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
@@ -133,24 +136,6 @@ public class UserController {
 
         return ResponseEntity.noContent().build(); // No Content (204) on successful deletion
     }
-
-    /*@GetMapping("/me/{userId}/inspirations")
-    @PreAuthorize("isAuthenticated()")
-    @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<List<Inspiration>> getMyInspirations(@PathVariable Integer userId) {
-        // Get the current user
-        User user = userService.getUserById(userId);
-
-        if (user == null) {
-            return ResponseEntity.status(404).body(null); // Not found if user does not exist
-        }
-
-        // Get the user's inspirations
-        List<Inspiration> inspirations = userService.getInspirationsByUserId(userId);
-
-        return ResponseEntity.ok(inspirations);
-    }
-*/
 
     @PostMapping("/me/{userId}/befriend/{friendId}")
     @PreAuthorize("isAuthenticated()")

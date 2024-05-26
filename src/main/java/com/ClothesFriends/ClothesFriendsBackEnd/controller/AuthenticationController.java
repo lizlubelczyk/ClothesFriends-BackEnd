@@ -1,9 +1,8 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.CreateUserDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.LogUserDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.AuthenticationResponse;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.User.LogUserDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Authentication.AuthenticationResponse;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.AuthenticationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

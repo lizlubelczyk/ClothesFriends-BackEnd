@@ -1,14 +1,13 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service.Inspiration;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetAllFriendsInspirationsDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.CreateInspirationDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetAllMyInspirationDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.GetMyInspirationDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.*;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.InspirationComment;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Like;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.Inspiration.InspirationRepository;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.FriendshipService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +34,9 @@ public class InspirationService {
 
     @Autowired
     private FriendshipService friendshipService;
+
+    @Autowired
+    private InspirationCommentService inspirationCommentService;
 
 
     public InspirationService(InspirationRepository inspirationRepository) {
@@ -96,11 +98,12 @@ public class InspirationService {
         return inspirationRepository.findById(inspirationId);
     }
 
+
     public Like likeInspiration(Inspiration inspiration, User user) {
-        likeService.likeInspiration(inspiration, user);
-        return null;
+        return likeService.likeInspiration(inspiration, user);
     }
 
+    @Transactional
     public void unlikeInspiration(Inspiration inspiration, User user) {
         likeService.unlikeInspiration(inspiration, user);
     }
@@ -134,4 +137,37 @@ public class InspirationService {
         return friendsInspirations;
     }
 
+    public Boolean hasLiked(Inspiration inspiration, User user) {
+        return likeService.hasLiked(inspiration, user);
+    }
+
+    public void commentInspiration(Inspiration inspiration, User user, String comment) {
+        inspirationCommentService.commentInspiration(inspiration, user, comment);
+    }
+
+    public List<GetInspirationCommentsDTO> getComments(Integer inspirationId) {
+        List<InspirationComment> comments = inspirationCommentService.getComments(inspirationId);
+        List<GetInspirationCommentsDTO> commentDTOs = new ArrayList<>();
+        for (InspirationComment comment : comments) {
+            commentDTOs.add(new GetInspirationCommentsDTO(comment.getUser().getId(), comment.getUser().getUsername(), comment.getComment(), comment.getUser().getProfilePicture(), comment.getId()));
+        }
+        return commentDTOs;
+    }
+
+    public Integer countComments(Integer inspirationId) {
+        return inspirationCommentService.countComments(inspirationId);
+    }
+
+    public void deleteCommentById(Integer commentId) {
+        inspirationCommentService.deleteCommentById(commentId);
+    }
+
+    public List<GetAllFriendsInspirationsDTO> getLikedInspirations(Integer userId) {
+        List<Inspiration> inspirations = likeService.getLikedInspirationsByUserId(userId);
+        List<GetAllFriendsInspirationsDTO> inspirationDTOs = new ArrayList<>();
+        for (Inspiration inspiration : inspirations) {
+            inspirationDTOs.add(new GetAllFriendsInspirationsDTO(inspiration.getId(), inspiration.getImage()));
+        }
+        return inspirationDTOs;
+    }
 }

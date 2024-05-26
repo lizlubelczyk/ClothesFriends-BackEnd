@@ -3,9 +3,10 @@ package com.ClothesFriends.ClothesFriendsBackEnd.service;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.CreateClothingItemDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemBySubcategoryDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.ClothingItem;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.ClothingItemRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -113,6 +114,7 @@ public class ClothingItemService {
         return clothingItemRepository.save(clothingItem);
     }
 
+    @Transactional
     public void deleteClothingItem(Integer clothingItemId) {
         clothingItemRepository.deleteById(clothingItemId);
     }

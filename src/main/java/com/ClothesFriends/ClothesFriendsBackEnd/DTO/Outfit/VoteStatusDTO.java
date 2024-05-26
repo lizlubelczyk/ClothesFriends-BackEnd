@@ -1,6 +1,6 @@
-package com.ClothesFriends.ClothesFriendsBackEnd.DTO;
+package com.ClothesFriends.ClothesFriendsBackEnd.DTO.Outfit;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.model.VoteType;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.VoteType;
 import lombok.Data;
 
 @Data

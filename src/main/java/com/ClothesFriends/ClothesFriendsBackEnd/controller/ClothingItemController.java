@@ -3,7 +3,7 @@ package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.CreateClothingItemDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemBySubcategoryDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.ClothingItem;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.ClothingItemService;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.UserService;

@@ -1,4 +1,4 @@
-package com.ClothesFriends.ClothesFriendsBackEnd.model;
+package com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import jakarta.persistence.*;

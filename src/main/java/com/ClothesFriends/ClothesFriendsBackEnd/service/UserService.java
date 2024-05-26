@@ -1,6 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.*;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.User.*;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.Friendship;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
@@ -112,7 +112,7 @@ public class UserService {
         Files.copy(profilePicture.getInputStream(), profilePicturePath, StandardCopyOption.REPLACE_EXISTING);
 
         // Return the path to the profile picture file
-        return profilePicturePath.toString();
+        return "/images/" + userId + "/profilepicture/" + filename;
     }
     public void deleteUserById(Integer userId) {
         userRepository.deleteById(userId);

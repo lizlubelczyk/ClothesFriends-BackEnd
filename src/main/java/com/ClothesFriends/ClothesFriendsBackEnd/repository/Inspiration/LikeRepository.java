@@ -18,4 +18,6 @@ public interface LikeRepository extends JpaRepository<Like, Integer> {
     Integer countByInspirationId(Integer inspirationId);
 
     void deleteByInspirationAndUser(Inspiration inspiration, User user);
+
+    Boolean existsByInspirationAndUser(Inspiration inspiration, User user);
 }

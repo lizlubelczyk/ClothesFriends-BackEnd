@@ -1,9 +1,9 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration.CreateUserDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.LogUserDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.AuthenticationResponse;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.Token;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.User.LogUserDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Authentication.AuthenticationResponse;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Authentication.Token;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.TokenRepository;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.User.UserRepository;

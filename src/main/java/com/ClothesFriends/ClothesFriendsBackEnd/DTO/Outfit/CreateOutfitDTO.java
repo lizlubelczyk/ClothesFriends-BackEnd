@@ -1,4 +1,4 @@
-package com.ClothesFriends.ClothesFriendsBackEnd.DTO;
+package com.ClothesFriends.ClothesFriendsBackEnd.DTO.Outfit;
 
 import lombok.Data;
 

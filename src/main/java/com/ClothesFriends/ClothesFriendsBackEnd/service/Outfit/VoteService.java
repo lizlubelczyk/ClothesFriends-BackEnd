@@ -3,7 +3,7 @@ package com.ClothesFriends.ClothesFriendsBackEnd.service.Outfit;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Outfit;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Vote;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.VoteType;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.VoteType;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.Outfit.VoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,5 +28,9 @@ public class VoteService {
 
     public void saveVote(Vote vote) {
         voteRepository.save(vote);
+    }
+
+    public void deleteVote(Vote vote) {
+        voteRepository.delete(vote);
     }
 }

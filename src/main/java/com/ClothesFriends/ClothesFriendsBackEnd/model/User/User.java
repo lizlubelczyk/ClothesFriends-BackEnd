@@ -1,13 +1,13 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.model.User;
 
 
-import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.ClothingItem;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Like;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Comment;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.OutfitComment;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Outfit;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Vote;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.Token;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Authentication.Token;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -70,7 +70,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Comment> comments;
+    private List<OutfitComment> comments;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

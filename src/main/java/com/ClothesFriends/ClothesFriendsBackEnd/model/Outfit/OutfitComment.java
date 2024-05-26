@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "comment")
-public class Comment {
+@Table(name = "outfitComment")
+public class OutfitComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,6 +15,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @Column(name = "comment", nullable = false)
@@ -26,4 +27,28 @@ public class Comment {
     private Outfit outfit;
 
 
+    public User getUser() {
+        return user;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setOutfit(Outfit outfit) {
+        this.outfit = outfit;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Integer getId() {
+        return id;
+    }
 }

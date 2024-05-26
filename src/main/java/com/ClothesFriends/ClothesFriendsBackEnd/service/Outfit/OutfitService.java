@@ -1,13 +1,11 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service.Outfit;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.CreateOutfitDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetFriendsOutfitsDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetMyOutfitDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.VoteStatusDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Outfit.*;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Outfit;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.OutfitComment;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Vote;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.VoteType;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.VoteType;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.Outfit.OutfitRepository;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.FriendshipService;
 import jakarta.transaction.Transactional;
@@ -38,6 +36,9 @@ public class OutfitService {
 
     @Autowired
     private VoteService voteService;
+
+    @Autowired
+    private OutfitCommentService outfitCommentService;
 
     public Outfit findByUserId(Integer userId) {
         return outfitRepository.findByUserId(userId);
@@ -152,5 +153,51 @@ public class OutfitService {
             return new VoteStatusDTO(false, null);
         }
         return new VoteStatusDTO(true, vote.getVoteType());
+    }
+
+    public void deleteVote(Outfit outfit, User user) {
+        Vote vote = voteService.getUsersVote(outfit, user);
+        if (vote != null) {
+            voteService.deleteVote(vote);
+        }
+    }
+
+    public void changeVote(Outfit outfit, User user, VoteType voteType) {
+        Vote vote = voteService.getUsersVote(outfit, user);
+        if (vote != null) {
+            vote.setVoteType(voteType);
+            voteService.saveVote(vote);
+        }
+    }
+
+    public Integer countLikes(Integer outfitId) {
+        return voteService.countLikes(outfitId);
+    }
+
+    public Integer countDislikes(Integer outfitId) {
+        return voteService.countDislikes(outfitId);
+    }
+
+    public void commentOutfit(Outfit outfit, User user, String comment) {
+        outfitCommentService.commentOutfit(outfit, user, comment);
+    }
+
+    public List<GetOutfitCommentsDTO> getComments(Integer outfitId) {
+        List<OutfitComment> comments = outfitCommentService.getComments(outfitId);
+        List<GetOutfitCommentsDTO> commentDTOs = new ArrayList<>();
+        for (OutfitComment comment : comments) {
+            commentDTOs.add(new GetOutfitCommentsDTO(comment.getUser().getId(), comment.getUser().getUsername(), comment.getComment(), comment.getUser().getProfilePicture(), comment.getId()));
+        }
+
+        return commentDTOs;
+    }
+
+    public Integer countComments(Integer outfitId) {
+        return outfitCommentService.countComments(outfitId);
+    }
+
+    public void deleteComment(Integer commentId) {
+        OutfitComment comment = outfitCommentService.getCommentById(commentId);
+        outfitCommentService.deleteComment(comment);
     }
 }

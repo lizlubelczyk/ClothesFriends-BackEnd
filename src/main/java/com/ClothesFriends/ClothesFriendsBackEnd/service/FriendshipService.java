@@ -1,6 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.CreateFriendshipDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.User.CreateFriendshipDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.Friendship;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.User.FriendshipRepository;

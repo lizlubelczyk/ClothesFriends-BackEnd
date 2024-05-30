@@ -1,5 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetNotificationDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.User.*;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.Friendship;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
@@ -210,5 +211,30 @@ public class UserController {
         Integer count = userService.countFriends(userId);
         return ResponseEntity.ok(count);
     }
+
+    @GetMapping("/me/{userId}/notifications")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetNotificationDTO>> getNotifications(@PathVariable Integer userId) {
+        List<GetNotificationDTO> notifications = userService.getNotifications(userId);
+        return ResponseEntity.ok(notifications);
+    }
+
+    @GetMapping("/me/{userId}/notifications/unread")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetNotificationDTO>> getUnreadNotifications(@PathVariable Integer userId) {
+        List<GetNotificationDTO> notifications = userService.getUnreadNotifications(userId);
+        return ResponseEntity.ok(notifications);
+    }
+    @PostMapping("/notification/{notificationId}/markAsSeen")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Void> markNotificationAsSeen(@PathVariable Integer notificationId) {
+        userService.markNotificationAsSeen(notificationId);
+        return ResponseEntity.ok().build();
+    }
+
+
 
 }

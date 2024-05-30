@@ -1,5 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetNotificationDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.User.CreateFriendshipDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.Friendship;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
@@ -62,5 +63,4 @@ public class FriendshipService {
     public Integer countFriends(Integer userId) {
         return friendshipRepository.findByUser1IdOrUser2Id(userId, userId).size();
     }
-
 }

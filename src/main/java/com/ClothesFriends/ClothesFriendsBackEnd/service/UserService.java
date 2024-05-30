@@ -1,5 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetNotificationDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.User.*;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.Friendship;
@@ -36,6 +37,9 @@ public class UserService {
 
     @Autowired
     private FriendshipService friendshipService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -131,7 +135,12 @@ public class UserService {
     }
 
     public Friendship befriendUsers(CreateFriendshipDTO friendshipDTO) {
+        User user = userRepository.findById(friendshipDTO.getUser1())
+                .orElseThrow(() -> new UsernameNotFoundException("User with id '" + friendshipDTO.getUser1() + "' not found"));
+        User friend = userRepository.findById(friendshipDTO.getUser2())
+                .orElseThrow(() -> new UsernameNotFoundException("User with id '" + friendshipDTO.getUser2() + "' not found"));
 
+        notificationService.createBefriendNotification(user, friend);
 
         return friendshipService.saveFriendship(friendshipDTO);
     }
@@ -174,6 +183,9 @@ public class UserService {
     @Transactional
     public void deleteFriendship(Integer userId, Integer friendId) {
         friendshipService.deleteFriendship(userId, friendId);
+        User user = userRepository.findById(userId).get();
+        User friend = userRepository.findById(friendId).get();
+        notificationService.createUnfriendNotification(user, friend);
     }
 
     public List<GetAllFriendsDTO> getFriends(Integer userId) {
@@ -187,6 +199,18 @@ public class UserService {
 
     public Integer countFriends(Integer userId) {
         return friendshipService.countFriends(userId);
+    }
+
+    public List<GetNotificationDTO> getNotifications(Integer userId) {
+        return notificationService.getNotifications(userId);
+    }
+
+    public void markNotificationAsSeen(Integer notificationId) {
+        notificationService.markNotificationAsSeen(notificationId);
+    }
+
+    public List<GetNotificationDTO> getUnreadNotifications(Integer userId) {
+        return notificationService.getUnreadNotifications(userId);
     }
 
 

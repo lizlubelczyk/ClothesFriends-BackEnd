@@ -1,8 +1,11 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.CreateClothingItemDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetBorrowRequestDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemBySubcategoryDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.BorrowRequest;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.Chat;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.ClothingItem;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.ClothingItemRepository;
@@ -26,6 +29,15 @@ import java.util.UUID;
 public class ClothingItemService {
     @Autowired
     private ClothingItemRepository clothingItemRepository;
+
+    @Autowired
+    private BorrowRequestService borrowRequestService;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private ChatService chatService;
 
 
 
@@ -117,5 +129,41 @@ public class ClothingItemService {
     @Transactional
     public void deleteClothingItem(Integer clothingItemId) {
         clothingItemRepository.deleteById(clothingItemId);
+    }
+
+    public void createBorrowRequest(ClothingItem clothingItem, User user) {
+        BorrowRequest borrowRequest = borrowRequestService.createBorrowRequest(user, clothingItem);
+        notificationService.createBorrowRequestNotification(borrowRequest);
+    }
+
+    public Boolean wasRequested(ClothingItem clothingItem, User user) {
+        return borrowRequestService.wasRequested(clothingItem, user);
+    }
+
+    public GetBorrowRequestDTO getBorrowRequest(Integer requestId) {
+        BorrowRequest borrowRequest = borrowRequestService.getBorrowRequest(requestId);
+        return new GetBorrowRequestDTO(borrowRequest.getUser().getUsername(), borrowRequest.getClothingItem().getImage());
+
+    }
+
+    public ClothingItem acceptBorrowRequest(Integer borrowRequestId) {
+        BorrowRequest borrowRequest = borrowRequestService.getBorrowRequest(borrowRequestId);
+        ClothingItem clothingItem = borrowRequest.getClothingItem();
+        clothingItem.setAvailable(false);
+        Chat chat = chatService.createChat(borrowRequest.getUser(), clothingItem.getUser(), clothingItem);
+        borrowRequestService.acceptBorrowRequest(borrowRequest);
+        notificationService.createAcceptBorrowRequestNotification(borrowRequest, chat);
+        return clothingItemRepository.save(clothingItem);
+    }
+
+    public void rejectBorrowRequest(Integer borrowRequestId) {
+        BorrowRequest borrowRequest = borrowRequestService.getBorrowRequest(borrowRequestId);
+        notificationService.createRejectBorrowRequestNotification(borrowRequest);
+        borrowRequestService.rejectBorrowRequest(borrowRequest);
+    }
+
+    public Boolean wasHandled(Integer borrowRequestId) {
+        return borrowRequestService.wasHandled(borrowRequestId);
+
     }
 }

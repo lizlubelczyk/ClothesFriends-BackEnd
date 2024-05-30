@@ -27,6 +27,7 @@ public class BorrowRequestService {
             return false;
         }
         return true;
+
     }
 
     public BorrowRequest getBorrowRequest(Integer requestId) {
@@ -46,3 +47,4 @@ public class BorrowRequestService {
         return borrowRequest.getRequestStatus() == RequestStatus.ACCEPTED || borrowRequest.getRequestStatus() == RequestStatus.REJECTED;
     }
 }
+

@@ -166,4 +166,5 @@ public class ClothingItemService {
         return borrowRequestService.wasHandled(borrowRequestId);
 
     }
+
 }

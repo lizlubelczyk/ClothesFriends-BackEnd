@@ -5,6 +5,7 @@ import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetBorrowReques
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemBySubcategoryDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.BorrowRequest;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.Chat;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.ClothingItem;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.ClothingItemRepository;
@@ -34,6 +35,9 @@ public class ClothingItemService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private ChatService chatService;
 
 
 
@@ -146,7 +150,21 @@ public class ClothingItemService {
         BorrowRequest borrowRequest = borrowRequestService.getBorrowRequest(borrowRequestId);
         ClothingItem clothingItem = borrowRequest.getClothingItem();
         clothingItem.setAvailable(false);
+        Chat chat = chatService.createChat(borrowRequest.getUser(), clothingItem.getUser(), clothingItem);
         borrowRequestService.acceptBorrowRequest(borrowRequest);
+        notificationService.createAcceptBorrowRequestNotification(borrowRequest, chat);
         return clothingItemRepository.save(clothingItem);
     }
+
+    public void rejectBorrowRequest(Integer borrowRequestId) {
+        BorrowRequest borrowRequest = borrowRequestService.getBorrowRequest(borrowRequestId);
+        notificationService.createRejectBorrowRequestNotification(borrowRequest);
+        borrowRequestService.rejectBorrowRequest(borrowRequest);
+    }
+
+    public Boolean wasHandled(Integer borrowRequestId) {
+        return borrowRequestService.wasHandled(borrowRequestId);
+
+    }
+
 }

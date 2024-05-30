@@ -147,4 +147,20 @@ public class ClothingItemController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{borrowRequestId}/rejectBorrowRequest")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Void> rejectBorrowRequest(@PathVariable Integer borrowRequestId) {
+        clothingItemService.rejectBorrowRequest(borrowRequestId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{borrowRequestId}/wasHandled")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Boolean> wasHandled(@PathVariable Integer borrowRequestId) {
+        return ResponseEntity.ok(clothingItemService.wasHandled(borrowRequestId));
+    }
+
 }
+

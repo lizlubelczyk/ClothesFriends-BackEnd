@@ -2,7 +2,7 @@ package com.ClothesFriends.ClothesFriendsBackEnd.service;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetNotificationDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.BorrowRequest;
-
+import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.Chat;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Notifications.Notification;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Notifications.NotificationStatus;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Notifications.NotificationType;
@@ -30,14 +30,15 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-    public List<GetNotificationDTO> getNotifications(Integer userId) {
-        List<Notification> notifications = notificationRepository.getNotificationsByReceiverUserId(userId);
-        List<GetNotificationDTO> notificationDTOs = new ArrayList<GetNotificationDTO>();
-        for (Notification notification : notifications) {
-            notificationDTOs.add(new GetNotificationDTO(notification.getId(), notification.getSenderUser().getId(), notification.getSenderUser().getUsername(), notification.getMessage(), notification.getRedirectUrl(), notification.getSenderUser().getProfilePicture(), notification.getNotificationType()));
-        }
-        return notificationDTOs;
-    }
+   public List<GetNotificationDTO> getNotifications(Integer userId) {
+       List<Notification> notifications = notificationRepository.getNotificationsByReceiverUserId(userId);
+       List<GetNotificationDTO> notificationDTOs = new ArrayList<GetNotificationDTO>();
+       for (Notification notification : notifications) {
+           notificationDTOs.add(new GetNotificationDTO(notification.getId(), notification.getSenderUser().getId(), notification.getSenderUser().getUsername(), notification.getMessage(), notification.getRedirectUrl(), notification.getSenderUser().getProfilePicture(), notification.getNotificationType()));
+       }
+         return notificationDTOs;
+   }
+
 
     public void createUnfriendNotification(User user, User friend) {
         Notification notification = new Notification();
@@ -75,9 +76,12 @@ public class NotificationService {
         return notificationDTOs;
     }
 
-    public void createAcceptBorrowRequestNotification(BorrowRequest borrowRequest) {
+    public void createAcceptBorrowRequestNotification(BorrowRequest borrowRequest, Chat chat) {
         Notification notification = new Notification();
         notification.setMessage(" ha aceptado tu solicitud de préstamo de " + borrowRequest.getClothingItem().getName());
+        String notificationURL = "/Chat/" + chat.getId();
+        notification.setNotificationURL(notificationURL);
+
         notification.setType(NotificationType.BORROW_REQUEST_ACCEPTED);
         notification.setReceiverUser(borrowRequest.getUser());
         notification.setSenderUser(borrowRequest.getClothingItem().getUser());
@@ -94,3 +98,4 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 }
+

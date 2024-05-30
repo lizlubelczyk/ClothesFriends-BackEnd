@@ -22,7 +22,12 @@ public class BorrowRequestService {
     }
 
     public Boolean wasRequested(ClothingItem clothingItem, User user) {
-        return borrowRequestRepository.existsByClothingItemAndUser(clothingItem, user);
+        BorrowRequest borrowRequest = borrowRequestRepository.getBorrowRequestByClothingItemAndUser(clothingItem, user);
+        if (borrowRequest == null || borrowRequest.getRequestStatus() == RequestStatus.REJECTED) {
+            return false;
+        }
+        return true;
+
     }
 
     public BorrowRequest getBorrowRequest(Integer requestId) {
@@ -32,4 +37,14 @@ public class BorrowRequestService {
     public void acceptBorrowRequest(BorrowRequest borrowRequest) {
         borrowRequest.setRequestStatus(RequestStatus.ACCEPTED);
     }
+
+    public void rejectBorrowRequest(BorrowRequest borrowRequest) {
+        borrowRequest.setRequestStatus(RequestStatus.REJECTED);
+    }
+
+    public Boolean wasHandled(Integer borrowRequestId) {
+        BorrowRequest borrowRequest = borrowRequestRepository.findById(borrowRequestId).get();
+        return borrowRequest.getRequestStatus() == RequestStatus.ACCEPTED || borrowRequest.getRequestStatus() == RequestStatus.REJECTED;
+    }
 }
+

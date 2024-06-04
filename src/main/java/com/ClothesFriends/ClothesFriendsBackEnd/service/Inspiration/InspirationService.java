@@ -7,6 +7,7 @@ import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Like;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.Inspiration.InspirationRepository;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.FriendshipService;
+import com.ClothesFriends.ClothesFriendsBackEnd.service.NotificationService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,9 @@ public class InspirationService {
 
     @Autowired
     private InspirationCommentService inspirationCommentService;
+
+    @Autowired
+    private NotificationService notificationService;
 
 
     public InspirationService(InspirationRepository inspirationRepository) {
@@ -143,6 +147,8 @@ public class InspirationService {
 
     public void commentInspiration(Inspiration inspiration, User user, String comment) {
         inspirationCommentService.commentInspiration(inspiration, user, comment);
+        notificationService.notifyInspirationComment(inspiration, user, comment);
+
     }
 
     public List<GetInspirationCommentsDTO> getComments(Integer inspirationId) {

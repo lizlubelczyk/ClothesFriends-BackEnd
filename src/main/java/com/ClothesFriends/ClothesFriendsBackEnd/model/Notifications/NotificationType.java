@@ -6,5 +6,5 @@ public enum NotificationType {
     BORROW_REQUEST_REJECTED,
     BEFRIEND,
     UNFRIEND,
-    LIKE
+    OUTFIT_COMMENT, INSPIRATION_COMMENT, LIKE
 }

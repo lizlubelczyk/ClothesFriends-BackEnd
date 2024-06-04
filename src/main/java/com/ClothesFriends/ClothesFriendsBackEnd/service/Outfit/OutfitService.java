@@ -8,6 +8,7 @@ import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.VoteType;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.Outfit.OutfitRepository;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.FriendshipService;
+import com.ClothesFriends.ClothesFriendsBackEnd.service.NotificationService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,9 @@ public class OutfitService {
 
     @Autowired
     private OutfitCommentService outfitCommentService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     public Outfit findByUserId(Integer userId) {
         return outfitRepository.findByUserId(userId);
@@ -180,6 +184,7 @@ public class OutfitService {
 
     public void commentOutfit(Outfit outfit, User user, String comment) {
         outfitCommentService.commentOutfit(outfit, user, comment);
+        notificationService.notifyOutfitComment(outfit, user, comment);
     }
 
     public List<GetOutfitCommentsDTO> getComments(Integer outfitId) {

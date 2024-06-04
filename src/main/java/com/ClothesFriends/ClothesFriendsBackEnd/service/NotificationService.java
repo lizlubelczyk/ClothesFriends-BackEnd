@@ -3,9 +3,11 @@ package com.ClothesFriends.ClothesFriendsBackEnd.service;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetNotificationDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.BorrowRequest;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.Chat;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Notifications.Notification;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Notifications.NotificationStatus;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Notifications.NotificationType;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Outfit;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +95,27 @@ public class NotificationService {
         notification.setType(NotificationType.BORROW_REQUEST_REJECTED);
         notification.setReceiverUser(borrowRequest.getUser());
         notification.setSenderUser(borrowRequest.getClothingItem().getUser());
+        notificationRepository.save(notification);
+    }
+
+    public void notifyOutfitComment(Outfit outfit, User user, String comment) {
+        Notification notification = new Notification();
+        notification.setMessage(" ha comentado \"" + comment + "\" en tu outfit");
+        notification.setType(NotificationType.OUTFIT_COMMENT);
+        notification.setReceiverUser(outfit.getUser());
+        notification.setSenderUser(user);
+        notification.setNotificationURL("/MyCurrentOutfit");
+        notificationRepository.save(notification);
+
+    }
+
+    public void notifyInspirationComment(Inspiration inspiration, User user, String comment) {
+        Notification notification = new Notification();
+        notification.setMessage(" ha comentado \"" + comment + "\" en tu inspiración");
+        notification.setType(NotificationType.INSPIRATION_COMMENT);
+        notification.setReceiverUser(inspiration.getUser());
+        notification.setSenderUser(user);
+        notification.setNotificationURL("/MyInspirationDetails/" + inspiration.getId());
         notificationRepository.save(notification);
     }
 }

@@ -12,3 +12,4 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
 
     List<Notification> getNotificationsByReceiverUserId(Integer userId);
 }
+

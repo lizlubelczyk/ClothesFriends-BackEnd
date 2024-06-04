@@ -12,3 +12,4 @@ public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, In
 
     BorrowRequest getBorrowRequestByClothingItemAndUser(ClothingItem clothingItem, User user);
 }
+

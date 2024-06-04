@@ -41,6 +41,7 @@ public class NotificationService {
          return notificationDTOs;
    }
 
+
     public void createUnfriendNotification(User user, User friend) {
         Notification notification = new Notification();
         notification.setMessage("dejó de ser tu amigo");
@@ -82,6 +83,7 @@ public class NotificationService {
         notification.setMessage(" ha aceptado tu solicitud de préstamo de " + borrowRequest.getClothingItem().getName());
         String notificationURL = "/Chat/" + chat.getId();
         notification.setNotificationURL(notificationURL);
+
         notification.setType(NotificationType.BORROW_REQUEST_ACCEPTED);
         notification.setReceiverUser(borrowRequest.getUser());
         notification.setSenderUser(borrowRequest.getClothingItem().getUser());
@@ -119,3 +121,4 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 }
+

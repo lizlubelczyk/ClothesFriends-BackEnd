@@ -12,5 +12,3 @@ public class GetBorrowRequestDTO {
         this.clothingItemImage = clothingItemImage;
     }
 }
-
-

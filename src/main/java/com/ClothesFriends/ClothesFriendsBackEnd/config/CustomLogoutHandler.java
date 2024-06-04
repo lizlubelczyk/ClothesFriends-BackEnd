@@ -1,6 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.config;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.model.Token;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Authentication.Token;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

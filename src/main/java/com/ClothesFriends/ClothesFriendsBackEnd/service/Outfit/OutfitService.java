@@ -1,10 +1,15 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.service.Outfit;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.CreateOutfitDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetMyOutfitDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.Outfit.*;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Outfit;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.OutfitComment;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.Vote;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit.VoteType;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.Outfit.OutfitRepository;
+import com.ClothesFriends.ClothesFriendsBackEnd.service.FriendshipService;
+import com.ClothesFriends.ClothesFriendsBackEnd.service.NotificationService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +22,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,6 +31,18 @@ public class OutfitService {
 
     @Autowired
     private OutfitRepository outfitRepository;
+
+    @Autowired
+    private FriendshipService friendshipService;
+
+    @Autowired
+    private VoteService voteService;
+
+    @Autowired
+    private OutfitCommentService outfitCommentService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     public Outfit findByUserId(Integer userId) {
         return outfitRepository.findByUserId(userId);
@@ -89,5 +108,101 @@ public class OutfitService {
 
     public void deleteOutfit(Outfit outfit) {
         outfitRepository.delete(outfit);
+    }
+
+    public List<GetFriendsOutfitsDTO> getFriendsOutfits(Integer userId) {
+        List<User> friends = friendshipService.getFriends(userId);
+        List<GetFriendsOutfitsDTO> friendsOutfits = new ArrayList<>();
+        for (User friend : friends) {
+            Outfit outfit = outfitRepository.findLatestByUserId(friend.getId());
+            if (outfit != null) {
+                LocalDateTime createdAt = outfit.getCreatedAt();
+                LocalDateTime now = LocalDateTime.now();
+                Duration duration = Duration.between(createdAt, now);
+                if (duration.toHours() < 3) {
+                    friendsOutfits.add(new GetFriendsOutfitsDTO(outfit.getId(), outfit.getDescription(), outfit.getImage(), friend.getUsername(), friend.getProfilePicture(), friend.getId()));
+                }
+            }
+
+        }
+        return friendsOutfits;
+    }
+
+    @Transactional
+    public void voteOutfit(Outfit outfit, User user, VoteType voteType) {
+        // Check if user has already voted, if yes update, otherwise create new vote
+        Vote existingVote = voteService.getUsersVote(outfit, user);
+
+
+        if (existingVote != null) {
+            existingVote.setVoteType(voteType);
+        } else {
+            Vote vote = new Vote();
+            vote.setOutfit(outfit);
+            vote.setUser(user);
+            vote.setVoteType(voteType);
+            voteService.saveVote(vote);
+        }
+    }
+
+    public VoteStatusDTO getUserVoteStatus(Integer outfitId, Integer userId) {
+        Outfit outfit = outfitRepository.findById(outfitId).orElse(null);
+        User user = new User();
+        user.setId(userId);
+        if (outfit == null) {
+            return new VoteStatusDTO(false, null);
+        }
+        Vote vote = voteService.getUsersVote(outfit, user);
+        if (vote == null) {
+            return new VoteStatusDTO(false, null);
+        }
+        return new VoteStatusDTO(true, vote.getVoteType());
+    }
+
+    public void deleteVote(Outfit outfit, User user) {
+        Vote vote = voteService.getUsersVote(outfit, user);
+        if (vote != null) {
+            voteService.deleteVote(vote);
+        }
+    }
+
+    public void changeVote(Outfit outfit, User user, VoteType voteType) {
+        Vote vote = voteService.getUsersVote(outfit, user);
+        if (vote != null) {
+            vote.setVoteType(voteType);
+            voteService.saveVote(vote);
+        }
+    }
+
+    public Integer countLikes(Integer outfitId) {
+        return voteService.countLikes(outfitId);
+    }
+
+    public Integer countDislikes(Integer outfitId) {
+        return voteService.countDislikes(outfitId);
+    }
+
+    public void commentOutfit(Outfit outfit, User user, String comment) {
+        outfitCommentService.commentOutfit(outfit, user, comment);
+        notificationService.notifyOutfitComment(outfit, user, comment);
+    }
+
+    public List<GetOutfitCommentsDTO> getComments(Integer outfitId) {
+        List<OutfitComment> comments = outfitCommentService.getComments(outfitId);
+        List<GetOutfitCommentsDTO> commentDTOs = new ArrayList<>();
+        for (OutfitComment comment : comments) {
+            commentDTOs.add(new GetOutfitCommentsDTO(comment.getUser().getId(), comment.getUser().getUsername(), comment.getComment(), comment.getUser().getProfilePicture(), comment.getId()));
+        }
+
+        return commentDTOs;
+    }
+
+    public Integer countComments(Integer outfitId) {
+        return outfitCommentService.countComments(outfitId);
+    }
+
+    public void deleteComment(Integer commentId) {
+        OutfitComment comment = outfitCommentService.getCommentById(commentId);
+        outfitCommentService.deleteComment(comment);
     }
 }

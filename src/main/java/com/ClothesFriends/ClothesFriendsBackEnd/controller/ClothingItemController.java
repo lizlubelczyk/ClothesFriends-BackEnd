@@ -1,9 +1,10 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.CreateClothingItemDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetBorrowRequestDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemBySubcategoryDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.ClothingItem.GetClothingItemDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.ClothingItem;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.ClothingItemService;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.UserService;
@@ -99,4 +100,67 @@ public class ClothingItemController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{clothingItemId}/borrowrequest/{userId}")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<ClothingItem> borrowRequest(@PathVariable Integer clothingItemId, @PathVariable Integer userId) {
+        ClothingItem clothingItem = clothingItemService.getClothingItemById(clothingItemId).get();
+        if (clothingItem == null) {
+            return ResponseEntity.status(404).body(null); // Not found if clothing item does not exist
+        }
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.status(404).body(null); // Not found if user does not exist
+        }
+        clothingItemService.createBorrowRequest(clothingItem, user);
+        return ResponseEntity.ok(clothingItem);
+    }
+
+    @GetMapping("/{userId}/{clothingItemId}/wasRequested")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Boolean> wasRequested(@PathVariable Integer userId, @PathVariable Integer clothingItemId) {
+        ClothingItem clothingItem = clothingItemService.getClothingItemById(clothingItemId).get();
+        if (clothingItem == null) {
+            return ResponseEntity.status(404).body(null); // Not found if clothing item does not exist
+        }
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.status(404).body(null); // Not found if user does not exist
+        }
+        return ResponseEntity.ok(clothingItemService.wasRequested(clothingItem, user));
+    }
+
+    @GetMapping("/{requestId}/getBorrowRequest")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<GetBorrowRequestDTO> getBorrowRequest(@PathVariable Integer requestId) {
+        GetBorrowRequestDTO clothingItem = clothingItemService.getBorrowRequest(requestId);
+        return ResponseEntity.ok(clothingItem);
+    }
+
+    @PostMapping("/{borrowRequestId}/acceptBorrowRequest")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Void> acceptBorrowRequest(@PathVariable Integer borrowRequestId) {
+        clothingItemService.acceptBorrowRequest(borrowRequestId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{borrowRequestId}/rejectBorrowRequest")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Void> rejectBorrowRequest(@PathVariable Integer borrowRequestId) {
+        clothingItemService.rejectBorrowRequest(borrowRequestId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{borrowRequestId}/wasHandled")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Boolean> wasHandled(@PathVariable Integer borrowRequestId) {
+        return ResponseEntity.ok(clothingItemService.wasHandled(borrowRequestId));
+    }
+
 }
+

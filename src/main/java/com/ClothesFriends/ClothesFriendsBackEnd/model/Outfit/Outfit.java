@@ -39,7 +39,7 @@ public class Outfit {
 
     @OneToMany(mappedBy = "outfit", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Comment> comments;
+    private List<OutfitComment> comments;
 
     public String getImage() {
         return image;

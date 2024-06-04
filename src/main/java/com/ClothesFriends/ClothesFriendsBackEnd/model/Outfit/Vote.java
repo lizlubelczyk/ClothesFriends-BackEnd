@@ -1,7 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.model.Outfit;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.VoteType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 

@@ -38,4 +38,8 @@ public class LikeService {
     public void unlikeInspiration(Inspiration inspiration, User user) {
         likeRepository.deleteByInspirationAndUser(inspiration, user);
     }
+
+    public Boolean hasLiked(Inspiration inspiration, User user) {
+        return likeRepository.existsByInspirationAndUser(inspiration, user);
+    }
 }

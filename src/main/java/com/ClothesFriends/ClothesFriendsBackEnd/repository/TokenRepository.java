@@ -1,6 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.repository;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.model.Token;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.Authentication.Token;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

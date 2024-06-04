@@ -1,9 +1,8 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.controller;
 
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.EditUserDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.UpdateUserRequestDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.DTO.UserProfileDTO;
-import com.ClothesFriends.ClothesFriendsBackEnd.model.Inspiration.Inspiration;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetNotificationDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.User.*;
+import com.ClothesFriends.ClothesFriendsBackEnd.model.User.Friendship;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.Inspiration.InspirationService;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.Inspiration.LikeService;
@@ -58,6 +57,18 @@ public class UserController {
 
     }
 
+    @GetMapping("/search/{userName}/id")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Integer> searchUserIds(@PathVariable String userName) {
+        Integer userId = userService.getUserIdByUsername(userName);
+        if (userId != null) {
+            return ResponseEntity.ok(userId);
+        } else {
+            return ResponseEntity.status(404).body(null); // Not found if user does not exist
+        }
+    }
+
 
 
     // Update the authenticated user's details
@@ -83,7 +94,10 @@ public class UserController {
     @PostMapping("/me/{userId}/profile-picture")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<User> updateCurrentUserProfilePicture(@PathVariable Integer userId, @RequestParam("profilePicture") MultipartFile profilePicture) {
+    public ResponseEntity<User> updateCurrentUserProfilePicture(
+            @PathVariable Integer userId,
+            @RequestParam("profilePicture") MultipartFile profilePicture) {
+
         // Get the current user
         User user = userService.getUserById(userId);
 
@@ -105,6 +119,7 @@ public class UserController {
         }
     }
 
+
     @DeleteMapping("/me/delete/{userId}")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
@@ -123,10 +138,10 @@ public class UserController {
         return ResponseEntity.noContent().build(); // No Content (204) on successful deletion
     }
 
-    /*@GetMapping("/me/{userId}/inspirations")
+    @PostMapping("/me/{userId}/befriend/{friendId}")
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<List<Inspiration>> getMyInspirations(@PathVariable Integer userId) {
+    public ResponseEntity<Friendship> befriendUser(@PathVariable Integer userId, @PathVariable Integer friendId) {
         // Get the current user
         User user = userService.getUserById(userId);
 
@@ -134,13 +149,91 @@ public class UserController {
             return ResponseEntity.status(404).body(null); // Not found if user does not exist
         }
 
-        // Get the user's inspirations
-        List<Inspiration> inspirations = userService.getInspirationsByUserId(userId);
+        // Get the friend
+        User friend = userService.getUserById(friendId);
 
-        return ResponseEntity.ok(inspirations);
+        if (friend == null) {
+            return ResponseEntity.status(404).body(null); // Not found if friend does not exist
+        }
+
+        CreateFriendshipDTO friendshipDTO = new CreateFriendshipDTO(userId, friendId);
+        // Befriend the users
+        Friendship friendship = userService.befriendUsers(friendshipDTO);
+
+        return ResponseEntity.ok(friendship);
     }
-*/
 
+    @GetMapping("/other/{userId}/profile")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<GetOtherUserDTO> getOtherUserProfile(@PathVariable Integer userId) {
+        GetOtherUserDTO user = userService.getOtherUserProfile(userId);
+        return ResponseEntity.ok(user);
 
+    }
+
+    @GetMapping("/get/{userId}/fullname")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<String> getFullName(@PathVariable Integer userId) {
+        String fullName = userService.getFullName(userId);
+        return ResponseEntity.ok(fullName);
+    }
+
+    @GetMapping("/{userId}/{friendId}/isFriend")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Boolean> isFriend(@PathVariable Integer userId, @PathVariable Integer friendId) {
+        Boolean isFriend = userService.isFriend(userId, friendId);
+        return ResponseEntity.ok(isFriend);
+    }
+
+    @DeleteMapping("/{userId}/{friendId}/deleteFriendship")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Void> unfriend(@PathVariable Integer userId, @PathVariable Integer friendId) {
+        userService.deleteFriendship(userId, friendId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/get/{userId}/friends")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetAllFriendsDTO>> getFriends(@PathVariable Integer userId) {
+        List<GetAllFriendsDTO> friends = userService.getFriends(userId);
+        return ResponseEntity.ok(friends);
+    }
+
+    @GetMapping("/get/{userId}/friendCount")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Integer> countFriends(@PathVariable Integer userId) {
+        Integer count = userService.countFriends(userId);
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/me/{userId}/notifications")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetNotificationDTO>> getNotifications(@PathVariable Integer userId) {
+        List<GetNotificationDTO> notifications = userService.getNotifications(userId);
+        return ResponseEntity.ok(notifications);
+    }
+
+    @GetMapping("/me/{userId}/notifications/unread")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetNotificationDTO>> getUnreadNotifications(@PathVariable Integer userId) {
+        List<GetNotificationDTO> notifications = userService.getUnreadNotifications(userId);
+        return ResponseEntity.ok(notifications);
+    }
+    @PostMapping("/notification/{notificationId}/markAsSeen")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Void> markNotificationAsSeen(@PathVariable Integer notificationId) {
+        userService.markNotificationAsSeen(notificationId);
+        return ResponseEntity.ok().build();
+    }
 
 }
+

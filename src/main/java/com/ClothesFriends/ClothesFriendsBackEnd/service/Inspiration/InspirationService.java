@@ -118,7 +118,7 @@ public class InspirationService {
 
     public GetMyInspirationDTO getInspiration(Integer inspirationId) {
         Inspiration inspiration = inspirationRepository.findById(inspirationId).get();
-        return new GetMyInspirationDTO(inspiration.getImage(), inspiration.getDescription());
+        return new GetMyInspirationDTO(inspiration.getImage(), inspiration.getDescription(), inspiration.getUser().getId());
     }
 
 

@@ -205,4 +205,21 @@ public class OutfitService {
         OutfitComment comment = outfitCommentService.getCommentById(commentId);
         outfitCommentService.deleteComment(comment);
     }
+
+    public List<GetArchivedOutfitsDTO> getMyOutfits(Integer userId) {
+        List<Outfit> outfits = outfitRepository.findAllByUserId(userId);
+        List<GetArchivedOutfitsDTO> outfitDTOs = new ArrayList<>();
+        for (Outfit outfit : outfits) {
+            outfitDTOs.add(new GetArchivedOutfitsDTO(outfit.getId(), outfit.getImage()));
+        }
+        return outfitDTOs;
+    }
+
+    public GetArchivedOutfitDTO getArchivedOutfit(Integer outfitId) {
+        Outfit outfit = outfitRepository.findById(outfitId).orElse(null);
+        if (outfit != null) {
+            return new GetArchivedOutfitDTO(outfit.getImage(), outfit.getCreatedAt());
+        }
+        return null;
+    }
 }

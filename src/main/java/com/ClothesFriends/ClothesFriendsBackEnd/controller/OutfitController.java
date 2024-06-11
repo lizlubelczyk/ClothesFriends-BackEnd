@@ -10,6 +10,7 @@ import com.ClothesFriends.ClothesFriendsBackEnd.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -252,6 +253,20 @@ public class OutfitController {
         return ResponseEntity.noContent().build(); // No Content (204) on successful deletion
     }
 
+    @GetMapping("/{userId}/getMyOutfits")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetArchivedOutfitsDTO>> getMyOutfits(@PathVariable Integer userId) {
+        return ResponseEntity.ok(outfitService.getMyOutfits(userId));
+    }
+
+    @GetMapping(value = "/{outfitId}/getOutfitById", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<GetArchivedOutfitDTO> getOutfitById(@PathVariable Integer outfitId) {
+        GetArchivedOutfitDTO outfit = outfitService.getArchivedOutfit(outfitId);
+        return ResponseEntity.ok(outfit);
+    }
 
 
 

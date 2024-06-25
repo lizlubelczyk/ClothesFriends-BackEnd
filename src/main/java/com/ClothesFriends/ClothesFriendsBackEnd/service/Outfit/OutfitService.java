@@ -88,13 +88,14 @@ public class OutfitService {
             LocalDateTime createdAt = latestOutfit.getCreatedAt();
             LocalDateTime now = LocalDateTime.now();
             Duration duration = Duration.between(createdAt, now);
-            if (duration.toHours() < 3) {
+            if (duration.toMinutes() < 1) {  // Changed to 10 minutes
                 return new GetMyOutfitDTO(latestOutfit.getId(), latestOutfit.getImage(), latestOutfit.getDescription());
             }
         }
         // Return an empty DTO to indicate no outfit found
         return new GetMyOutfitDTO(null, null, null);
     }
+
 
     public boolean hasOutfit(Integer userId) {
         GetMyOutfitDTO outfit = getLatestOutfitByUserId(userId);
@@ -119,7 +120,7 @@ public class OutfitService {
                 LocalDateTime createdAt = outfit.getCreatedAt();
                 LocalDateTime now = LocalDateTime.now();
                 Duration duration = Duration.between(createdAt, now);
-                if (duration.toHours() < 3) {
+                if (duration.toMinutes() < 1) {
                     friendsOutfits.add(new GetFriendsOutfitsDTO(outfit.getId(), outfit.getDescription(), outfit.getImage(), friend.getUsername(), friend.getProfilePicture(), friend.getId()));
                 }
             }

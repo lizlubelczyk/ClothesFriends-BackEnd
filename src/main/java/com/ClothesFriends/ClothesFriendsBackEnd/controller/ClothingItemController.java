@@ -93,9 +93,6 @@ public class ClothingItemController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Void> deleteClothingItem(@PathVariable Integer clothingItemId){
         ClothingItem clothingItem = clothingItemService.getClothingItemById(clothingItemId).get();
-        if (clothingItem == null) {
-            return ResponseEntity.status(404).build(); // Not found if clothing item does not exist
-        }
         clothingItemService.deleteClothingItem(clothingItemId);
         return ResponseEntity.ok().build();
     }
@@ -160,6 +157,23 @@ public class ClothingItemController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Boolean> wasHandled(@PathVariable Integer borrowRequestId) {
         return ResponseEntity.ok(clothingItemService.wasHandled(borrowRequestId));
+    }
+
+    @GetMapping("/getClothingItemsPublic/{userId}/{subcategory}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetClothingItemBySubcategoryDTO>> getClothingItemsPublic(@PathVariable Integer userId, @PathVariable String subcategory) {
+        List<GetClothingItemBySubcategoryDTO> clothingItems = clothingItemService.getAllClothingItemsBySubcategory(userId, subcategory);
+        return ResponseEntity.ok(clothingItems);
+    }
+
+    @GetMapping("/getClothingItemPublic/{itemId}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<GetClothingItemDTO> getClothingItemPublic(@PathVariable Integer itemId) {
+        GetClothingItemDTO clothingItem = clothingItemService.getClothingItem(itemId);
+        if (clothingItem.getName() == null) {
+            return ResponseEntity.status(404).body(null); // Not found if clothing item does not exist
+        }
+        return ResponseEntity.ok(clothingItem);
     }
 
 }

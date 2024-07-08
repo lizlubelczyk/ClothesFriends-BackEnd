@@ -269,6 +269,37 @@ public class OutfitController {
     }
 
 
+    @GetMapping("/{userId}/getPublic")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<GetMyOutfitDTO> getLatestPublic(@PathVariable Integer userId) {
+        return ResponseEntity.ok(outfitService.getLatestOutfitByUserId(userId));
+    }
+
+    @GetMapping("/{userId}/hasOutfitPublic")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Boolean> hasOutfitPublic(@PathVariable Integer userId) {
+        boolean hasOutfit = outfitService.hasOutfit(userId);
+
+        return ResponseEntity.ok(hasOutfit);
+    }
+
+    @GetMapping("/{outfitId}/getLikesPublic")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Integer> getLikesPublic(@PathVariable Integer outfitId) {
+        return ResponseEntity.ok(outfitService.countLikes(outfitId));
+    }
+
+    @GetMapping("/{outfitId}/getDislikesPublic")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Integer> getDislikesPublic(@PathVariable Integer outfitId) {
+        return ResponseEntity.ok(outfitService.countDislikes(outfitId));
+    }
+
+    @GetMapping("/{outfitId}/getCommentsPublic")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetOutfitCommentsDTO>> getCommentsPublic(@PathVariable Integer outfitId) {
+        return ResponseEntity.ok(outfitService.getComments(outfitId));
+    }
 
 
 

@@ -1,22 +1,14 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.DTO.User;
 
-public class GetOtherUserDTO {
-    private String profilePicture;
+public class GetPublicProfileDTO {
     private String username;
+    private String profilePicture;
     private String fullName;
 
-    public GetOtherUserDTO(String profilePicture, String username, String fullName) {
-        this.profilePicture = profilePicture;
+    public GetPublicProfileDTO(String username, String profilePicture, String fullName) {
         this.username = username;
-        this.fullName = fullName;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
+        this.fullName = fullName;
     }
 
     public String getUsername() {
@@ -27,6 +19,14 @@ public class GetOtherUserDTO {
         this.username = username;
     }
 
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
     public String getFullName() {
         return fullName;
     }
@@ -34,4 +34,5 @@ public class GetOtherUserDTO {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
+
 }

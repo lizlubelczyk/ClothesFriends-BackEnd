@@ -41,11 +41,12 @@ public class User implements UserDetails {
     @Column (name = "profile_picture")
     private String profilePicture= "/images/Default.jpeg";
 
-    @Column(name= "WhatsappLink")
-    private String whatsappLink="";
-
     @Enumerated(value = EnumType.STRING)
     private Role role;
+
+    @Column(name = "public_profile")
+    private PublicProfile publicProfile = PublicProfile.PRIVATE;
+
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -175,11 +176,11 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public String getWhatsappLink() {
-        return whatsappLink;
+    public boolean isPublic() {
+        return publicProfile == PublicProfile.PUBLIC;
     }
 
-    public void setWhatsappLink(String whatsappLink) {
-        this.whatsappLink = whatsappLink;
+    public void setPublic(boolean b) {
+        publicProfile = b ? PublicProfile.PUBLIC : PublicProfile.PRIVATE;
     }
 }

@@ -193,5 +193,37 @@ public class InspirationController {
         return ResponseEntity.ok(inspirations);
     }
 
+    @GetMapping("/getPublic/{userId}/all")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<GetAllFriendsInspirationsDTO>> getPublicInspirations(@PathVariable Integer userId) {
+        List<GetAllFriendsInspirationsDTO> inspirations = inspirationService.getFriendsInspirations(userId);
+        return ResponseEntity.ok(inspirations);
+    }
+
+    @GetMapping("/getPublic/{inspirationId}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<GetMyInspirationDTO> getPublicInspiration(@PathVariable Integer inspirationId) {
+        GetMyInspirationDTO inspiration = inspirationService.getInspiration(inspirationId);
+
+        if(inspiration == null) {
+            return ResponseEntity.status(404).body(null); // Not found if inspiration does not exist
+        }
+        return ResponseEntity.ok(inspiration);
+    }
+
+    @GetMapping("/getPublic/{inspirationId}/likes")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Integer> countPublicLikes(@PathVariable Integer inspirationId) {
+        Integer likes = inspirationService.countLikes(inspirationId);
+        return ResponseEntity.ok(likes);
+    }
+
+    @GetMapping("/getPublic/{inspirationId}/comments")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Integer> countPublicComments(@PathVariable Integer inspirationId) {
+        Integer comments = inspirationService.countComments(inspirationId);
+        return ResponseEntity.ok(comments);
+    }
+
 
 }

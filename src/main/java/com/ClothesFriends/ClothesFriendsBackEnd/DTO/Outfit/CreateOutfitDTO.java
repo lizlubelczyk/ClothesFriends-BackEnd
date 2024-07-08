@@ -1,10 +1,5 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.DTO.Outfit;
 
-import lombok.Data;
-
-import java.util.Date;
-
-@Data
 public class CreateOutfitDTO {
     private byte[] image;
     private String description;
@@ -13,6 +8,30 @@ public class CreateOutfitDTO {
     public CreateOutfitDTO(byte[] image, String description, Integer userId) {
         this.image = image;
         this.description = description;
+        this.userId = userId;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 }

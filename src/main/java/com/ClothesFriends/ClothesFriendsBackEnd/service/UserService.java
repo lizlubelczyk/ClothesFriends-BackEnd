@@ -61,7 +61,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User with id '" + userId + "' not found"));
 
-        return new EditUserDTO(user.getUsername(), user.getFullName(), user.getEmail(), user.getWhatsappLink(), user.getProfilePicture());
+        return new EditUserDTO(user.getUsername(), user.getFullName(), user.getEmail(), user.getProfilePicture(), user.isPublic());
     }
 
     public User updateUser(UpdateUserRequestDTO updatedUser, Integer userId){
@@ -79,9 +79,7 @@ public class UserService {
         if (updatedUser.getUsername() != null) {
             existingUser.setUsername(updatedUser.getUsername());
         }
-        if (updatedUser.getWhatsappLink() != null) {
-            existingUser.setWhatsappLink(updatedUser.getWhatsappLink());
-        }
+
 
         // Do not update the password field, even if it's provided
         // Save the changes and return the updated user
@@ -211,6 +209,28 @@ public class UserService {
 
     public List<GetNotificationDTO> getUnreadNotifications(Integer userId) {
         return notificationService.getUnreadNotifications(userId);
+    }
+
+    public User updatePublic(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User with id '" + userId + "' not found"));
+
+        user.setPublic(!user.isPublic());
+        return userRepository.save(user);
+    }
+
+    public Boolean getPublic(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User with id '" + userId + "' not found"));
+
+        return user.isPublic();
+    }
+
+    public GetPublicProfileDTO getPublicProfile(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User with id '" + userId + "' not found"));
+
+        return new GetPublicProfileDTO(user.getUsername(), user.getProfilePicture(), user.getFullName());
     }
 
 

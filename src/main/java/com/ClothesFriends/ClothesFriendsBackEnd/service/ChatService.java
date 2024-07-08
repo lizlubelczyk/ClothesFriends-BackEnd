@@ -3,6 +3,7 @@ package com.ClothesFriends.ClothesFriendsBackEnd.service;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetChatDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetChatsDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetMessageDTO;
+import com.ClothesFriends.ClothesFriendsBackEnd.DTO.MessageDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.Chat;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.ClothingItem;
 import com.ClothesFriends.ClothesFriendsBackEnd.model.ClothingItem.Message;
@@ -10,10 +11,12 @@ import com.ClothesFriends.ClothesFriendsBackEnd.model.User.User;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.ChatRepository;
 import com.ClothesFriends.ClothesFriendsBackEnd.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
@@ -26,14 +29,42 @@ public class ChatService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+    private WebSocketService websocketService;
+
     public List<GetMessageDTO> getMessages(Integer chatId) {
-        List<Message> messages = messageRepository.findAllByChatId(chatId);
-        List<GetMessageDTO> messageDTOs = new ArrayList<GetMessageDTO>();
-        for (Message message : messages) {
-            messageDTOs.add(new GetMessageDTO(message.getMessage(), message.getUser().getUsername(), message.getUser().getId().toString(), message.getSentAt()));
-        }
-        return messageDTOs;
+        List<Message> messages = messageRepository.findByChatId(chatId);
+        return messages.stream()
+                .map(message -> new GetMessageDTO(
+                        message.getMessage(),
+                        message.getUser().getUsername(),
+                        message.getUser().getId().toString(),
+                        message.getSentAt()
+                ))
+                .collect(Collectors.toList());
     }
+
+    public GetMessageDTO saveAndBroadcastMessage(MessageDTO messageDTO) {
+        Chat chat = chatRepository.findById(messageDTO.getChatId()).orElseThrow(() -> new RuntimeException("Chat not found"));
+        Message message = new Message();
+        message.setChat(chat);
+        message.setMessage(messageDTO.getMessage());
+        message.setUser(userService.getUserById(messageDTO.getUserId()));
+        messageRepository.save(message);
+
+        GetMessageDTO getMessageDTO = new GetMessageDTO(
+                message.getMessage(),
+                message.getUser().getUsername(),
+                message.getUser().getId().toString(),
+                message.getSentAt()
+        );
+        simpMessagingTemplate.convertAndSend("/topic/chat/" + messageDTO.getChatId(), getMessageDTO);
+        return getMessageDTO;
+    }
+
 
 
     public Chat createChat(User user, User user1, ClothingItem clothingItem) {
@@ -71,6 +102,8 @@ public class ChatService {
         message1.setMessage(message);
         message1.setUser(userService.getUserById(userId));
         messageRepository.save(message1);
+        simpMessagingTemplate.convertAndSend("/topic/chat/" + chatId, new GetMessageDTO(message1.getMessage(), message1.getUser().getUsername(), message1.getUser().getId().toString(), message1.getSentAt()));
+
     }
 
     public List<GetChatsDTO> getChats(Integer userId) {
@@ -107,5 +140,38 @@ public class ChatService {
             }
         }
         return chatDTOs;
+    }
+
+    public GetMessageDTO saveMessage(MessageDTO messageDTO) {
+        Chat chat = chatRepository.findById(messageDTO.getChatId()).orElseThrow();
+        Message message = new Message();
+        message.setChat(chat);
+        message.setMessage(messageDTO.getMessage());
+        message.setUser(userService.getUserById(messageDTO.getUserId()));
+        messageRepository.save(message);
+        return new GetMessageDTO(message.getMessage(), message.getUser().getUsername(), message.getUser().getId().toString(), message.getSentAt());
+    }
+
+    public Integer getRecipientUserId(Integer chatId, Integer currentUserId) {
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new RuntimeException("Chat not found"));
+
+        // Determine which user is the recipient based on the current user
+        if (chat.getRequestingUser().getId().equals(currentUserId)) {
+            return chat.getRequestedUser().getId();
+        } else {
+            return chat.getRequestingUser().getId();
+        }
+    }
+
+
+    public String getRecipientUsername(Integer chatId, Integer userId) {
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new RuntimeException("Chat not found"));
+
+        // Determine which user is the recipient based on the current user
+        if (chat.getRequestingUser().getId().equals(userId)) {
+            return chat.getRequestedUser().getUsername();
+        } else {
+            return chat.getRequestingUser().getUsername();
+        }
     }
 }

@@ -1,21 +1,19 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.DTO.User;
 
-import lombok.Data;
 
-@Data
 public class EditUserDTO {
     private String email;
     private String fullName;
     private String username;
-    private String whatsappLink;
 
     private String profilePicture;
+    private Boolean isPublic;
 
-    public EditUserDTO(String email, String fullName, String username, String whatsappLink, String profilePicture) {
+    public EditUserDTO(String email, String fullName, String username, String profilePicture, Boolean isPublic) {
         this.email = email;
         this.fullName = fullName;
         this.username = username;
-        this.whatsappLink = whatsappLink;
         this.profilePicture = profilePicture;
+        this.isPublic = isPublic;
     }
 }

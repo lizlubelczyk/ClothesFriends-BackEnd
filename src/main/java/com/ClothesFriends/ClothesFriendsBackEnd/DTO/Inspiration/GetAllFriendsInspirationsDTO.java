@@ -1,8 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration;
 
-import lombok.Data;
 
-@Data
 public class GetAllFriendsInspirationsDTO {
 
     private Integer inspirationId;
@@ -11,6 +9,22 @@ public class GetAllFriendsInspirationsDTO {
 
     public GetAllFriendsInspirationsDTO(Integer inspirationId, String image) {
         this.inspirationId = inspirationId;
+        this.image = image;
+    }
+
+    public Integer getInspirationId() {
+        return inspirationId;
+    }
+
+    public void setInspirationId(Integer inspirationId) {
+        this.inspirationId = inspirationId;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
         this.image = image;
     }
 

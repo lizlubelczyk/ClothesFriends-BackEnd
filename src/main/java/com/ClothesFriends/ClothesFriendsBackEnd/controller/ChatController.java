@@ -6,6 +6,7 @@ import com.ClothesFriends.ClothesFriendsBackEnd.DTO.GetMessageDTO;
 import com.ClothesFriends.ClothesFriendsBackEnd.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,9 @@ public class ChatController {
 
     @Autowired
     private ChatService chatService;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @GetMapping("/{chatId}/getMessages")
     @PreAuthorize("isAuthenticated()")
@@ -55,6 +59,10 @@ public class ChatController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Void> createMessage(@PathVariable Integer chatId, @PathVariable Integer userId, @RequestBody String message) {
         chatService.createMessage(chatId, userId, message);
+
+        // Send message to WebSocket topic
+        messagingTemplate.convertAndSend("/topic/chat/" + chatId, message);
+
         return ResponseEntity.ok().build();
     }
 

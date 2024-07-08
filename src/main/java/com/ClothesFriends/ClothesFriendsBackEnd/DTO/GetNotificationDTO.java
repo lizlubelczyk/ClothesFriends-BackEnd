@@ -1,9 +1,7 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.DTO;
 
 import com.ClothesFriends.ClothesFriendsBackEnd.model.Notifications.NotificationType;
-import lombok.Data;
 
-@Data
 public class GetNotificationDTO {
     private Integer id;
     private Integer userId;
@@ -23,5 +21,59 @@ public class GetNotificationDTO {
         this.type = type;
     }
 
-}
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getNotificationURL() {
+        return notificationURL;
+    }
+
+    public void setNotificationURL(String notificationURL) {
+        this.notificationURL = notificationURL;
+    }
+
+    public String getUserProfilePicture() {
+        return userProfilePicture;
+    }
+
+    public void setUserProfilePicture(String userProfilePicture) {
+        this.userProfilePicture = userProfilePicture;
+    }
+
+    public NotificationType getType() {
+        return type;
+    }
+
+    public void setType(NotificationType type) {
+        this.type = type;
+    }
+}

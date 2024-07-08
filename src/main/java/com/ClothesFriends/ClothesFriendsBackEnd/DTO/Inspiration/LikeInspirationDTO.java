@@ -1,8 +1,6 @@
 package com.ClothesFriends.ClothesFriendsBackEnd.DTO.Inspiration;
 
-import lombok.Data;
 
-@Data
 public class LikeInspirationDTO {
     private Integer inspirationId;
     private Integer userId;
@@ -12,5 +10,20 @@ public class LikeInspirationDTO {
         this.userId = userId;
     }
 
+    public Integer getInspirationId() {
+        return inspirationId;
+    }
+
+    public void setInspirationId(Integer inspirationId) {
+        this.inspirationId = inspirationId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 
 }

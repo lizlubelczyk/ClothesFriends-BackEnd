@@ -119,6 +119,41 @@ public class UserController {
         }
     }
 
+    @PostMapping("/me/{userId}/public-profile")
+    @PreAuthorize("isAuthenticated()")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<User> updatePublic(@PathVariable Integer userId){
+        User updated = userService.updatePublic(userId);
+        return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping("/me/{userId}/public")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Boolean> getPublic(@PathVariable Integer userId){
+        Boolean isPublic = userService.getPublic(userId);
+        return ResponseEntity.ok(isPublic);
+    }
+
+    @GetMapping("/me/{userId}/getPublicProfile")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<GetPublicProfileDTO> getPublicProfile(@PathVariable Integer userId){
+        GetPublicProfileDTO publicProfile = userService.getPublicProfile(userId);
+        return ResponseEntity.ok(publicProfile);
+    }
+
+    @GetMapping("/me/{userId}/getPublicFriendCount")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Integer> getPublicFriendCount(@PathVariable Integer userId){
+        Integer friendCount = userService.getFriends(userId).size();
+        return ResponseEntity.ok(friendCount);
+    }
+
+    @GetMapping("/me/{userId}/getPublicFullName")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<String> getPublicFullName(@PathVariable Integer userId){
+        String fullName = userService.getFullName(userId);
+        return ResponseEntity.ok(fullName);
+    }
 
     @DeleteMapping("/me/delete/{userId}")
     @PreAuthorize("isAuthenticated()")

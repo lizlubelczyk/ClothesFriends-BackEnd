@@ -51,4 +51,16 @@ public class Message {
     public LocalDateTime getSentAt() {
         return sentAt;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Integer getChatId() {
+        return chat.getId();
+    }
+
+    public Integer getUserId() {
+        return user.getId();
+    }
 }

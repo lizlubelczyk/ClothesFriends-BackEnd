@@ -88,7 +88,7 @@ public class OutfitService {
             LocalDateTime createdAt = latestOutfit.getCreatedAt();
             LocalDateTime now = LocalDateTime.now();
             Duration duration = Duration.between(createdAt, now);
-            if (duration.toMinutes() < 1) {  // Changed to 10 minutes
+            if (duration.toMinutes() < 30) {  // Changed to 10 minutes
                 return new GetMyOutfitDTO(latestOutfit.getId(), latestOutfit.getImage(), latestOutfit.getDescription());
             }
         }
